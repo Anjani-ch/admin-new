@@ -14,3 +14,9 @@ export const createPage = async (dto: CreatePageDto) => {
 
 	await client.post('/api/page', dto)
 }
+
+export const deletePageById = async (pageId: string) => {
+	const client = await getApiClient()
+
+	await client.delete(`/api/page/${pageId}`)
+}

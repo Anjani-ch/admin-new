@@ -4,6 +4,7 @@ import './globals.css'
 import { cn } from '@/lib/utils'
 import AsideNav from './_components/AsideNav'
 import Header from './_components/Header'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({
 	display: 'swap',
@@ -37,6 +38,7 @@ export default function RootLayout({
 						<main className='flex-1 items-start p-4 sm:px-6 sm:py-0'>
 							{children}
 						</main>
+						<Toaster />
 					</div>
 				</div>
 			</body>
