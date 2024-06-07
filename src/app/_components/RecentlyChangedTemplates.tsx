@@ -1,6 +1,5 @@
 import { getTemplates } from '@/data-access/template'
 import { getTemplatesUseCase } from '@/use-cases/template'
-
 import { Badge } from '@/components/ui/badge'
 import {
 	Card,
@@ -41,7 +40,7 @@ export default async function RecentlyChangedTemplates() {
 					<TableHeader>
 						<TableRow>
 							<TableHead>Template</TableHead>
-							<TableHead className='text-right sm:text-left'>Status</TableHead>
+							<TableHead>Status</TableHead>
 							<TableHead className='hidden md:table-cell'>
 								Sist endret
 							</TableHead>
