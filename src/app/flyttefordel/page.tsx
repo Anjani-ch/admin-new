@@ -17,6 +17,7 @@ import { getPages } from '@/data-access/page'
 import { getPagesUseCase } from '@/use-cases/page'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
+import CreatePageFormDialog from './_components/CreatePageFormDialog'
 
 export default async function page() {
 	const pages = await getPagesUseCase({ getPages })
@@ -28,6 +29,8 @@ export default async function page() {
 				<CardDescription>Sider i flyttefordel løpet</CardDescription>
 			</CardHeader>
 			<CardContent>
+				<CreatePageFormDialog />
+
 				<Table>
 					<TableHeader>
 						<TableRow>
