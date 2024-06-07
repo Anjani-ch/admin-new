@@ -15,3 +15,10 @@ export type GetContainerForPage = {
 	active?: boolean
 	templates?: GetTemplateForPage[]
 }
+
+export type CreateContainerDto = {
+	name: string
+	sortOrder: number
+	active: boolean
+	pageId: string
+}

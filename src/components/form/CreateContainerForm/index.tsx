@@ -15,11 +15,12 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { createPageAction } from './_actions/createPageAction'
+import { createContainerAction } from './_actions/createContainerAction'
 import { useToast } from '@/components/ui/use-toast'
 
 type Props = {
-	endpointId: number
+	pageId: string
+	sortOrder: number
 	afterSubmit?: () => void
 }
 
@@ -30,7 +31,11 @@ const formSchema = z.object({
 	active: z.boolean(),
 })
 
-export default function CreatePageForm({ endpointId, afterSubmit }: Props) {
+export default function CreateContainerForm({
+	sortOrder,
+	pageId,
+	afterSubmit,
+}: Props) {
 	const { toast } = useToast()
 
 	const form = useForm<FormSchema>({
@@ -43,26 +48,27 @@ export default function CreatePageForm({ endpointId, afterSubmit }: Props) {
 
 	const onSubmit: SubmitHandler<FormSchema> = useCallback(
 		async values => {
-			const [, err] = await createPageAction({
+			const [, err] = await createContainerAction({
 				...values,
-				endpointId,
+				sortOrder,
+				pageId,
 			})
 
 			if (err) {
 				toast({
-					title: 'Kunne ikke opprette side',
+					title: 'Kunne ikke opprette container',
 					description: err.message,
 				})
 			} else {
 				toast({
 					title: 'Vellyket',
-					description: `Side ${values.name} opprettet`,
+					description: `Container ${values.name} opprettet`,
 				})
 			}
 
 			if (afterSubmit) afterSubmit()
 		},
-		[afterSubmit, endpointId, toast]
+		[afterSubmit, pageId, sortOrder, toast]
 	)
 
 	return (

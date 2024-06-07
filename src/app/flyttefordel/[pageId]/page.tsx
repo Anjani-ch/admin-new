@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/table'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
+import CreateContainerFormDialog from './_components/CreateContainerFormDialog'
 
 type Props = {
 	params: {
@@ -27,6 +28,10 @@ type Props = {
 export default async function Page({ params: { pageId } }: Props) {
 	const page = await getPageByIdUseCase({ getPageById }, { pageId })
 
+	const highestSortOrder = page.containers
+		?.map(page => page.sortOrder!)
+		?.sort((a, b) => b - a)[0]
+
 	return (
 		<Card>
 			<CardHeader className='px-7'>
@@ -34,6 +39,11 @@ export default async function Page({ params: { pageId } }: Props) {
 				<CardDescription>Containers for side: {page.name}</CardDescription>
 			</CardHeader>
 			<CardContent>
+				<CreateContainerFormDialog
+					pageId={pageId}
+					sortOrder={highestSortOrder ? highestSortOrder + 1 : 0}
+				/>
+
 				<Table>
 					<TableHeader>
 						<TableRow>
@@ -54,15 +64,15 @@ export default async function Page({ params: { pageId } }: Props) {
 											<Link
 												href={`/flyttefordel/${pageId}/${container.containerId}`}
 											>
-												{page.name}
+												{container.name}
 											</Link>
 										</TableCell>
 										<TableCell>
 											<Badge
 												className='text-xs'
-												variant={page.active ? 'default' : 'secondary'}
+												variant={container.active ? 'default' : 'secondary'}
 											>
-												{page.active ? 'Aktiv' : 'Inaktiv'}
+												{container.active ? 'Aktiv' : 'Inaktiv'}
 											</Badge>
 										</TableCell>
 									</TableRow>

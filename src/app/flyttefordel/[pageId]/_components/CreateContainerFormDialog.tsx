@@ -9,10 +9,17 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import CreatePageForm from '@/components/form/CreatePageForm'
-import { env } from 'next-runtime-env'
+import CreateContainerForm from '@/components/form/CreateContainerForm'
 
-export default function CreatePageFormDialog() {
+type Props = {
+	pageId: string
+	sortOrder: number
+}
+
+export default function CreateContainerFormDialog({
+	pageId,
+	sortOrder,
+}: Props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -20,20 +27,21 @@ export default function CreatePageFormDialog() {
 					size={'sm'}
 					className='flex items-center gap-3 mb-5'
 				>
-					<PlusCircle /> Legg til side
+					<PlusCircle /> Legg til container
 				</Button>
 			</DialogTrigger>
 
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Opprett side</DialogTitle>
+					<DialogTitle>Opprett container</DialogTitle>
 				</DialogHeader>
 
-				<CreatePageForm
+				<CreateContainerForm
 					afterSubmit={() => {
 						document.getElementById('closeDialog')?.click()
 					}}
-					endpointId={parseInt(env('FLYTTEFORDEL_FLYTTEFORDEL_ENDPOINT_ID')!)}
+					pageId={pageId}
+					sortOrder={sortOrder}
 				/>
 			</DialogContent>
 		</Dialog>
