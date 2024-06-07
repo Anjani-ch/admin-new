@@ -1,3 +1,39 @@
+## Flyttefordel admin
+
+_Documentation and Git log language will be English_
+
+## Tech stack
+
+| Tech                 | Usage                                |
+| -------------------- | ------------------------------------ |
+| TypeScript           | Writing statically typed code        |
+| Tailwind             | Universal class first CSS framework  |
+| Next.js (App router) | React server side rendered framework |
+
+## Setup
+
+We use node 20, so make sure your node version is set to 20. You can easily achieve this with `nvm`
+
+Install node modules:
+
+```bash
+npm i
+```
+
+Run the project in development mode:
+
+```
+npm run dev
+```
+
+Push changes to main and the CI/CD pipeline will do the rest.
+
+## Writing CSS
+
+Do not write your own CSS files. If you must then use global CSS, but try not to write global CSS either. Use Tailwind to it's full potential.
+
+## Standard Next js README
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
