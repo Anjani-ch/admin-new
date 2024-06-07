@@ -1,10 +1,18 @@
 import { getApiClient } from '@/lib/axios'
-import { CreatePageDto, GetAllPagesVm } from '@/types/api/page'
+import { CreatePageDto, GetAllPagesVm, GetPageByKeyVm } from '@/types/api/page'
 
 export const getPages = async () => {
 	const client = await getApiClient()
 
 	const { data } = await client.get<GetAllPagesVm[]>('/api/page/all')
+
+	return data
+}
+
+export const getPageById = async (pageId: string) => {
+	const client = await getApiClient()
+
+	const { data } = await client.get<GetPageByKeyVm>(`/api/page/${pageId}`)
 
 	return data
 }

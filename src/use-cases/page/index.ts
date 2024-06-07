@@ -1,8 +1,14 @@
 import { CreatePageDto } from '@/types/api/page'
-import { GetPages, CreatePage, DeletePageById, GetContainers } from './types'
+import {
+	GetPages,
+	CreatePage,
+	DeletePageById,
+	GetContainers,
+	GetPageById,
+} from './types'
 
 export const getPagesUseCase = async (context: { getPages: GetPages }) => {
-	return context.getPages()
+	return await context.getPages()
 }
 
 export const createPageUseCase = async (
@@ -10,6 +16,13 @@ export const createPageUseCase = async (
 	data: CreatePageDto
 ) => {
 	await context.createPage(data)
+}
+
+export const getPageByIdUseCase = async (
+	context: { getPageById: GetPageById },
+	data: { pageId: string }
+) => {
+	return await context.getPageById(data.pageId)
 }
 
 export const deletePageUseCase = async (

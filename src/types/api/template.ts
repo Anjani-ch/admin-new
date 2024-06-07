@@ -1,8 +1,8 @@
 export type GetAllTemplateVm = {
-	templateId?: string
-	containerId?: string
-	templateTypeId?: number
-	name?: string
+	templateId: string
+	containerId: string
+	templateTypeId: number
+	name: string
 	sortOrder?: number
 	active?: boolean
 	header?: string
@@ -15,6 +15,10 @@ export type GetAllTemplateVm = {
 	terms?: string
 	confirmText?: string
 	confirmButtonText?: string
-	createdDate?: string
-	changedDate?: string
+	createdDate: string
+	changedDate: string
+}
+
+export type GetTemplateForPage = {
+	templateId: string
 }
