@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import CreatePageForm from '@/components/form/CreatePageForm'
 import { useState } from 'react'
+import { env } from 'next-runtime-env'
 
 export default function CreatePageFormDialog() {
 	return (
@@ -33,7 +34,7 @@ export default function CreatePageFormDialog() {
 					afterSubmit={() => {
 						document.getElementById('closeDialog')?.click()
 					}}
-					endpointId={1}
+					endpointId={parseInt(env('FLYTTEFORDEL_FLYTTEFORDEL_ENDPOINT_ID')!)}
 				/>
 			</DialogContent>
 		</Dialog>

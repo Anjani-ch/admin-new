@@ -21,9 +21,13 @@ import CreatePageFormDialog from './_components/CreatePageFormDialog'
 import { getContainersUseCase } from '@/use-cases/container'
 import { getContainers } from '@/data-access/container'
 import DeletePageButton from './_components/DeletePageButton'
+import { env } from 'next-runtime-env'
 
 export default async function page() {
-	const pages = await getPagesUseCase({ getPages })
+	const pages = await getPagesUseCase(
+		{ getPages },
+		{ endpointId: parseInt(env('FLYTTEFORDEL_FLYTTEFORDEL_ENDPOINT_ID')!) }
+	)
 
 	// We need to fetch all containers and later filter out ones that do not
 	// belong to specific pages

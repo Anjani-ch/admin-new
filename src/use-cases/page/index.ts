@@ -7,8 +7,16 @@ import {
 	GetPageById,
 } from './types'
 
-export const getPagesUseCase = async (context: { getPages: GetPages }) => {
-	return await context.getPages()
+export const getPagesUseCase = async (
+	context: { getPages: GetPages },
+	data?: { endpointId: number }
+) => {
+	let pages = await context.getPages()
+
+	if (data?.endpointId)
+		pages = pages.filter(page => page.endpointId === data?.endpointId)
+
+	return pages
 }
 
 export const createPageUseCase = async (
