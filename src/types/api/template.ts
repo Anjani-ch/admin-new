@@ -51,3 +51,25 @@ export type GetTemplateByKeyVm = {
 export type GetTemplateForPage = {
 	templateId: string
 }
+
+export type GetTemplateForContainerVm = {
+	templateId?: string
+	templateTypeId?: number
+	name?: string
+	sortOrder?: number
+	active?: boolean
+	header?: string
+	text?: string
+	validToDate?: string
+	offers?: GetTemplateOfferForContainerVm[]
+}
+
+export type CreateTemplateDto = {
+	name: string
+	active: boolean
+	pageId: string
+}
+
+export enum TemplateType {
+	Offer = 1,
+}

@@ -20,7 +20,6 @@ import { useToast } from '@/components/ui/use-toast'
 
 type Props = {
 	pageId: string
-	sortOrder: number
 	afterSubmit?: () => void
 }
 
@@ -31,11 +30,7 @@ const formSchema = z.object({
 	active: z.boolean(),
 })
 
-export default function CreateContainerForm({
-	sortOrder,
-	pageId,
-	afterSubmit,
-}: Props) {
+export default function CreateContainerForm({ pageId, afterSubmit }: Props) {
 	const { toast } = useToast()
 
 	const form = useForm<FormSchema>({
@@ -50,7 +45,6 @@ export default function CreateContainerForm({
 		async values => {
 			const [, err] = await createContainerAction({
 				...values,
-				sortOrder,
 				pageId,
 			})
 
@@ -68,7 +62,7 @@ export default function CreateContainerForm({
 
 			if (afterSubmit) afterSubmit()
 		},
-		[afterSubmit, pageId, sortOrder, toast]
+		[afterSubmit, pageId, toast]
 	)
 
 	return (
