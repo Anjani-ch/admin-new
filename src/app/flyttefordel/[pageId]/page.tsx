@@ -15,6 +15,14 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import CreateContainerFormDialog from './_components/CreateContainerFormDialog'
@@ -26,6 +34,8 @@ import {
 	BreadcrumbList,
 	BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
+import { MoreHorizontal } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 type Props = {
 	params: {
@@ -67,6 +77,9 @@ export default async function Page({ params: { pageId } }: Props) {
 							<TableRow>
 								<TableHead>Navn</TableHead>
 								<TableHead>Status</TableHead>
+								<TableHead>
+									<span className='sr-only'>Handlinger</span>
+								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -98,11 +111,27 @@ export default async function Page({ params: { pageId } }: Props) {
 												</Badge>
 											</TableCell>
 											<TableCell>
-												<DeleteContainerButton
-													containerName={container.name!}
-													containerId={container.containerId!}
-													disabled={!canDelete}
-												/>
+												<DropdownMenu>
+													<DropdownMenuTrigger asChild>
+														<Button
+															aria-haspopup='true'
+															size={'icon'}
+															variant={'ghost'}
+														>
+															<MoreHorizontal className='h-4 w-4' />
+															<span className='sr-only'>Bruke meny</span>
+														</Button>
+													</DropdownMenuTrigger>
+													<DropdownMenuContent align='end'>
+														<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
+														<DropdownMenuSeparator />
+														<DeleteContainerButton
+															containerName={container.name!}
+															containerId={container.containerId!}
+															disabled={!canDelete}
+														/>
+													</DropdownMenuContent>
+												</DropdownMenu>
 											</TableCell>
 										</TableRow>
 									)

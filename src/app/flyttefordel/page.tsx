@@ -13,6 +13,13 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { getPages } from '@/data-access/page'
 import { getPagesUseCase } from '@/use-cases/page'
 import { Badge } from '@/components/ui/badge'
@@ -28,6 +35,8 @@ import {
 	BreadcrumbLink,
 	BreadcrumbList,
 } from '@/components/ui/breadcrumb'
+import { Button } from '@/components/ui/button'
+import { MoreHorizontal } from 'lucide-react'
 
 export default async function page() {
 	const pages = await getPagesUseCase(
@@ -62,6 +71,9 @@ export default async function page() {
 							<TableRow>
 								<TableHead>Navn</TableHead>
 								<TableHead>Status</TableHead>
+								<TableHead>
+									<span className='sr-only'>Handlinger</span>
+								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -94,11 +106,28 @@ export default async function page() {
 												</Badge>
 											</TableCell>
 											<TableCell>
-												<DeletePageButton
-													pageName={page.name!}
-													pageId={page.pageId!}
-													disabled={!canDelete}
-												/>
+												<DropdownMenu>
+													<DropdownMenuTrigger asChild>
+														<Button
+															aria-haspopup='true'
+															size={'icon'}
+															variant={'ghost'}
+														>
+															<MoreHorizontal className='h-4 w-4' />
+															<span className='sr-only'>Bruke meny</span>
+														</Button>
+													</DropdownMenuTrigger>
+
+													<DropdownMenuContent align='end'>
+														<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
+														<DropdownMenuSeparator />
+														<DeletePageButton
+															pageName={page.name!}
+															pageId={page.pageId!}
+															disabled={!canDelete}
+														/>
+													</DropdownMenuContent>
+												</DropdownMenu>
 											</TableCell>
 										</TableRow>
 									)

@@ -1,10 +1,9 @@
 'use client'
 
 import { useToast } from '@/components/ui/use-toast'
-import { Button } from '@/components/ui/button'
-import { Trash } from 'lucide-react'
 import { deletePageAction } from '../_actions/deletePageActions'
 import { useState } from 'react'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
 type Props = {
 	disabled: boolean
@@ -21,9 +20,7 @@ export default function DeletePageButton({
 	const { toast } = useToast()
 
 	return (
-		<Button
-			variant={'destructive'}
-			size='icon'
+		<DropdownMenuItem
 			disabled={disabled || loading}
 			onClick={async () => {
 				setIsLoading(true)
@@ -45,7 +42,7 @@ export default function DeletePageButton({
 				})
 			}}
 		>
-			<Trash size={20} />
-		</Button>
+			Slett
+		</DropdownMenuItem>
 	)
 }
