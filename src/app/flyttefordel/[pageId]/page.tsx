@@ -18,6 +18,7 @@ import {
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import CreateContainerFormDialog from './_components/CreateContainerFormDialog'
+import DeleteContainerButton from './_components/DeleteContainerButton'
 
 type Props = {
 	params: {
@@ -48,6 +49,10 @@ export default async function Page({ params: { pageId } }: Props) {
 						{page.containers
 							?.sort((a, b) => a.sortOrder! - b.sortOrder!)
 							.map(container => {
+								// There is a business rule in backend API that you cannot delete container without deleting
+								// all connected templates first
+								const canDelete = (container.templates || []).length === 0
+
 								return (
 									<TableRow
 										key={container.containerId}
@@ -67,6 +72,13 @@ export default async function Page({ params: { pageId } }: Props) {
 											>
 												{container.active ? 'Aktiv' : 'Inaktiv'}
 											</Badge>
+										</TableCell>
+										<TableCell>
+											<DeleteContainerButton
+												containerName={container.name!}
+												containerId={container.containerId!}
+												disabled={!canDelete}
+											/>
 										</TableCell>
 									</TableRow>
 								)

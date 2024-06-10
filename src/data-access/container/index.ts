@@ -14,3 +14,9 @@ export const createContainer = async (dto: CreateContainerDto) => {
 
 	await client.post('/api/container', dto)
 }
+
+export const deleteContainerById = async (id: string) => {
+	const client = await getApiClient()
+
+	await client.delete(`/api/container/${id}`)
+}
