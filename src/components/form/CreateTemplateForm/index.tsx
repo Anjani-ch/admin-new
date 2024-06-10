@@ -2,7 +2,7 @@
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,6 +26,7 @@ import { createTemplateAction } from './_actions/createTemplateAction'
 import { useToast } from '@/components/ui/use-toast'
 import { TemplateType } from '@/types/api/template'
 import { templateTypes } from '@/constants/template'
+import { DatePicker } from '@/components/form-control/DatePicker'
 
 type Props = {
 	pageId: string
@@ -39,6 +40,7 @@ const formSchema = z.object({
 	name: z.string().min(1),
 	active: z.boolean(),
 	validToDate: z.date(),
+	noExpiry: z.boolean(),
 	templateTypeId: z.number(),
 })
 
@@ -56,13 +58,22 @@ export default function CreateTemplateForm({
 			active: false,
 			validToDate: new Date(),
 			templateTypeId: TemplateType.Offer,
+			noExpiry: false,
 		},
+	})
+
+	const noExpiryWatch = useWatch({
+		control: form.control,
+		name: 'noExpiry',
 	})
 
 	const onSubmit: SubmitHandler<FormSchema> = useCallback(
 		async values => {
 			const [, err] = await createTemplateAction({
 				...values,
+				validToDate: values.noExpiry
+					? new Date('9999-01-01')
+					: values.validToDate,
 				containerId,
 				pageId,
 			})
@@ -141,6 +152,44 @@ export default function CreateTemplateForm({
 										))}
 									</SelectContent>
 								</Select>
+							</FormItem>
+						)}
+					/>
+
+					{!noExpiryWatch && (
+						<FormField
+							control={form.control}
+							name='validToDate'
+							render={({ field }) => (
+								<FormItem className='mb-3'>
+									<FormLabel className='block'>Gyldig til</FormLabel>
+
+									<DatePicker
+										value={field.value}
+										onChange={field.onChange}
+										disabled={date =>
+											date.setHours(0, 0, 0, 0) <
+											new Date().setHours(0, 0, 0, 0)
+										}
+									/>
+								</FormItem>
+							)}
+						/>
+					)}
+
+					<FormField
+						control={form.control}
+						name='noExpiry'
+						render={({ field }) => (
+							<FormItem className='mb-4'>
+								<FormLabel className='block'>Uten utløp</FormLabel>
+
+								<FormControl>
+									<Switch
+										checked={field.value}
+										onCheckedChange={field.onChange}
+									/>
+								</FormControl>
 							</FormItem>
 						)}
 					/>
