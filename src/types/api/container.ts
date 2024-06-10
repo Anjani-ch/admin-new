@@ -1,4 +1,4 @@
-import { GetTemplateForPage } from './template'
+import { GetTemplateForContainerVm, GetTemplateForPage } from './template'
 
 export type GetAllContainersVm = {
 	containerId: string
@@ -14,6 +14,15 @@ export type GetContainerForPage = {
 	sortOrder?: number
 	active?: boolean
 	templates?: GetTemplateForPage[]
+}
+
+export type GetContainerByKeyVm = {
+	containerId?: string
+	pageId?: string
+	name?: string
+	sortOrder?: number
+	active?: boolean
+	templates?: GetTemplateForContainerVm[]
 }
 
 export type CreateContainerDto = {

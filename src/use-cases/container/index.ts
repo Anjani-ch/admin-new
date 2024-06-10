@@ -4,6 +4,7 @@ import {
 	GetContainers,
 	DeleteContainerById,
 	GetTemplates,
+	GetContainerById,
 } from './types'
 
 export const getContainersUseCase = async (context: {
@@ -17,6 +18,13 @@ export const createContainerUseCase = async (
 	data: CreateContainerDto
 ) => {
 	await context.createContainer(data)
+}
+
+export const getContainerByIdUseCase = async (
+	context: { getContainerById: GetContainerById },
+	data: { containerId: string }
+) => {
+	return await context.getContainerById(data.containerId)
 }
 
 export const deleteContainerUseCase = async (

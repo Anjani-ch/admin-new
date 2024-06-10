@@ -1,3 +1,5 @@
+import { GetTemplateOfferForContainerVm } from './templateOffer'
+
 export type GetAllTemplateVm = {
 	templateId: string
 	containerId: string
@@ -21,4 +23,16 @@ export type GetAllTemplateVm = {
 
 export type GetTemplateForPage = {
 	templateId: string
+}
+
+export type GetTemplateForContainerVm = {
+	templateId?: string
+	templateTypeId?: number
+	name?: string
+	sortOrder?: number
+	active?: boolean
+	header?: string
+	text?: string
+	validToDate?: string
+	offers?: GetTemplateOfferForContainerVm[]
 }
