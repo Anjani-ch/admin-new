@@ -64,7 +64,9 @@ export default async function page() {
 					<CardDescription>Sider i flyttefordel løpet</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<CreatePageFormDialog />
+					<CreatePageFormDialog
+						endpointId={parseInt(env('FLYTTEFORDEL_FLYTTEFORDEL_ENDPOINT_ID')!)}
+					/>
 
 					<Table>
 						<TableHeader>
