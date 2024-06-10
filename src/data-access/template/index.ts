@@ -14,3 +14,9 @@ export const createTemplate = async (dto: CreateTemplateDto) => {
 
 	await client.post('/api/template', dto)
 }
+
+export const deleteTemplateById = async (id: string) => {
+	const client = await getApiClient()
+
+	await client.delete(`api/template/${id}`)
+}

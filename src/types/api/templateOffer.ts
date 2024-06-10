@@ -11,3 +11,14 @@ export type GetTemplateOfferForContainerVm = {
 	changedDate?: string
 	product?: GetProductForContainerVm
 }
+
+export type GetAllTemplateOfferVm = {
+	templateId?: string
+	templateOfferId?: string
+	productId?: string
+	name?: string
+	sortOrder?: number
+	text?: string
+	price?: number
+	changedDate?: string
+}

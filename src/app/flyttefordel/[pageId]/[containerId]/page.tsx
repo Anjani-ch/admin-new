@@ -27,6 +27,16 @@ import { getContainerByIdUseCase } from '@/use-cases/container'
 import { getPageByIdUseCase } from '@/use-cases/page'
 import Link from 'next/link'
 import CreateTemplateFormDialog from './_components/CreateTemplateFormDialog'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import { MoreHorizontal } from 'lucide-react'
+import DeleteTemplateButton from './_components/DeleteTemplateButton'
 
 type Props = {
 	params: {
@@ -93,6 +103,9 @@ export default async function Page({ params: { containerId } }: Props) {
 								<TableHead>Produkter</TableHead>
 								<TableHead>Status</TableHead>
 								<TableHead>Gyldig til</TableHead>
+								<TableHead>
+									<span className='sr-only'>Handlinger</span>
+								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -100,6 +113,10 @@ export default async function Page({ params: { containerId } }: Props) {
 								?.sort((a, b) => a.sortOrder! - b.sortOrder!)
 								.map(template => {
 									const validToDate = new Date(template.validToDate!)
+
+									// There is a business rule in backend API that you cannot delete template without deleting
+									// all connected template offers first
+									const canDelete = (template.offers || []).length === 0
 
 									return (
 										<TableRow
@@ -138,6 +155,32 @@ export default async function Page({ params: { containerId } }: Props) {
 															year: '2-digit',
 													  }).format(validToDate)
 													: 'Uten utløp'}
+											</TableCell>
+											<TableCell>
+												<DropdownMenu>
+													<DropdownMenuTrigger asChild>
+														<Button
+															aria-haspopup='true'
+															size={'icon'}
+															variant={'ghost'}
+														>
+															<MoreHorizontal className='h-4 w-4' />
+															<span className='sr-only'>Bruke meny</span>
+														</Button>
+													</DropdownMenuTrigger>
+
+													<DropdownMenuContent align='end'>
+														<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
+														<DropdownMenuSeparator />
+														<DeleteTemplateButton
+															containerId={containerId}
+															pageId={container.pageId!}
+															templateId={template.templateId!}
+															templateName={template.name!}
+															disabled={!canDelete}
+														/>
+													</DropdownMenuContent>
+												</DropdownMenu>
 											</TableCell>
 										</TableRow>
 									)

@@ -1,39 +1,44 @@
 'use client'
 
 import { useToast } from '@/components/ui/use-toast'
-import { Button } from '@/components/ui/button'
-import { Trash } from 'lucide-react'
 import { useState } from 'react'
-import { deleteContainerAction } from '../_actions/deleteContainerActions'
+import { deleteTemplateAction } from '../_actions/deleteTemplateAction'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
 type Props = {
 	disabled: boolean
+	templateId: string
 	containerId: string
-	containerName: string
+	pageId: string
+	templateName: string
 }
 
 export default function DeleteTemplateButton({
 	disabled,
+	templateId,
 	containerId,
-	containerName,
+	pageId,
+	templateName,
 }: Props) {
 	const [loading, setIsLoading] = useState(false)
 	const { toast } = useToast()
 
 	return (
-		<Button
-			variant={'destructive'}
-			size='icon'
+		<DropdownMenuItem
 			disabled={disabled || loading}
 			onClick={async () => {
 				setIsLoading(true)
-				const [, err] = await deleteContainerAction(containerId)
+				const [, err] = await deleteTemplateAction({
+					templateId,
+					containerId,
+					pageId,
+				})
 
 				setIsLoading(false)
 
 				if (err) {
 					toast({
-						title: `Feil i sletting av container ${containerName}`,
+						title: `Feil i sletting av template ${templateName}`,
 						description: err.message,
 					})
 					return
@@ -41,11 +46,11 @@ export default function DeleteTemplateButton({
 
 				toast({
 					title: `Vellyket`,
-					description: `Container ${containerName} slettet`,
+					description: `Template ${templateName} slettet`,
 				})
 			}}
 		>
-			<Trash size={20} />
-		</Button>
+			Slett
+		</DropdownMenuItem>
 	)
 }
