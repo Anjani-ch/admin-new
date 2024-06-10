@@ -9,13 +9,17 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import CreateContainerForm from '@/components/form/CreateContainerForm'
+import CreateTemplateForm from '@/components/form/CreateTemplateForm'
 
 type Props = {
 	pageId: string
+	containerId: string
 }
 
-export default function CreateContainerFormDialog({ pageId }: Props) {
+export default function CreateTemplateFormDialog({
+	pageId,
+	containerId,
+}: Props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -23,20 +27,21 @@ export default function CreateContainerFormDialog({ pageId }: Props) {
 					size={'sm'}
 					className='flex items-center gap-3 mb-5'
 				>
-					<PlusCircle /> Legg til container
+					<PlusCircle /> Legg til annonse
 				</Button>
 			</DialogTrigger>
 
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Opprett container</DialogTitle>
+					<DialogTitle>Opprett annonse</DialogTitle>
 				</DialogHeader>
 
-				<CreateContainerForm
+				<CreateTemplateForm
 					afterSubmit={() => {
 						document.getElementById('closeDialog')?.click()
 					}}
 					pageId={pageId}
+					containerId={containerId}
 				/>
 			</DialogContent>
 		</Dialog>

@@ -1,20 +1,22 @@
 'use client'
 
 import { useToast } from '@/components/ui/use-toast'
-import { deletePageAction } from '../_actions/deletePageActions'
 import { useState } from 'react'
+import { deleteContainerAction } from '../_actions/deleteContainerActions'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
 type Props = {
 	disabled: boolean
+	containerId: string
+	containerName: string
 	pageId: string
-	pageName: string
 }
 
-export default function DeletePageButton({
+export default function DeleteContainerButton({
 	disabled,
+	containerId,
+	containerName,
 	pageId,
-	pageName,
 }: Props) {
 	const [loading, setIsLoading] = useState(false)
 	const { toast } = useToast()
@@ -24,13 +26,13 @@ export default function DeletePageButton({
 			disabled={disabled || loading}
 			onClick={async () => {
 				setIsLoading(true)
-				const [, err] = await deletePageAction({ pageId })
+				const [, err] = await deleteContainerAction({ containerId, pageId })
 
 				setIsLoading(false)
 
 				if (err) {
 					toast({
-						title: `Feil i sletting av side ${pageName}`,
+						title: `Feil i sletting av container ${containerName}`,
 						description: err.message,
 					})
 					return
@@ -38,7 +40,7 @@ export default function DeletePageButton({
 
 				toast({
 					title: `Vellyket`,
-					description: `Side ${pageName} slettet`,
+					description: `Container ${containerName} slettet`,
 				})
 			}}
 		>

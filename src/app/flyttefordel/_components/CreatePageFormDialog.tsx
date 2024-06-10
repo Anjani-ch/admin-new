@@ -12,7 +12,11 @@ import {
 import CreatePageForm from '@/components/form/CreatePageForm'
 import { env } from 'next-runtime-env'
 
-export default function CreatePageFormDialog() {
+type Props = {
+	endpointId: number
+}
+
+export default function CreatePageFormDialog({ endpointId }: Props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -33,7 +37,7 @@ export default function CreatePageFormDialog() {
 					afterSubmit={() => {
 						document.getElementById('closeDialog')?.click()
 					}}
-					endpointId={parseInt(env('FLYTTEFORDEL_FLYTTEFORDEL_ENDPOINT_ID')!)}
+					endpointId={endpointId}
 				/>
 			</DialogContent>
 		</Dialog>
