@@ -8,8 +8,13 @@ import { z } from 'zod'
 import { createServerAction, ZSAError } from 'zsa'
 
 export const deleteContainerAction = createServerAction()
-	.input(z.string())
-	.handler(async ({ input: containerId }) => {
+	.input(
+		z.object({
+			containerId: z.string(),
+			pageId: z.string(),
+		})
+	)
+	.handler(async ({ input: { containerId, pageId } }) => {
 		const { errors } = await deleteContainerUseCase(
 			{ deleteContainerById, getTemplates },
 			{ containerId }
@@ -18,9 +23,9 @@ export const deleteContainerAction = createServerAction()
 		if (errors?.childTemplates) {
 			throw new ZSAError(
 				'CONFLICT',
-				'Container kunne ikke slettes, sjekk at templates til side er slettet'
+				'Container kunne ikke slettes, sjekk at templates i container er slettet'
 			)
 		}
 
-		revalidatePath('/flyttefordel')
+		revalidatePath(`/flyttefordel/${pageId}/${containerId}`)
 	})

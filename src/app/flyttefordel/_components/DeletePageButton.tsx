@@ -24,7 +24,7 @@ export default function DeletePageButton({
 			disabled={disabled || loading}
 			onClick={async () => {
 				setIsLoading(true)
-				const [, err] = await deletePageAction(pageId)
+				const [, err] = await deletePageAction({ pageId })
 
 				setIsLoading(false)
 

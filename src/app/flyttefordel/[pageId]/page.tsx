@@ -126,6 +126,7 @@ export default async function Page({ params: { pageId } }: Props) {
 														<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
 														<DropdownMenuSeparator />
 														<DeleteContainerButton
+															pageId={pageId}
 															containerName={container.name!}
 															containerId={container.containerId!}
 															disabled={!canDelete}

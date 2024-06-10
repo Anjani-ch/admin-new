@@ -8,8 +8,12 @@ import { z } from 'zod'
 import { createServerAction, ZSAError } from 'zsa'
 
 export const deletePageAction = createServerAction()
-	.input(z.string())
-	.handler(async ({ input: pageId }) => {
+	.input(
+		z.object({
+			pageId: z.string(),
+		})
+	)
+	.handler(async ({ input: { pageId } }) => {
 		const { errors } = await deletePageUseCase(
 			{ deletePageById, getContainers },
 			{ pageId }

@@ -9,12 +9,14 @@ type Props = {
 	disabled: boolean
 	containerId: string
 	containerName: string
+	pageId: string
 }
 
-export default function DeletePageButton({
+export default function DeleteContainerButton({
 	disabled,
 	containerId,
 	containerName,
+	pageId,
 }: Props) {
 	const [loading, setIsLoading] = useState(false)
 	const { toast } = useToast()
@@ -24,7 +26,7 @@ export default function DeletePageButton({
 			disabled={disabled || loading}
 			onClick={async () => {
 				setIsLoading(true)
-				const [, err] = await deleteContainerAction(containerId)
+				const [, err] = await deleteContainerAction({ containerId, pageId })
 
 				setIsLoading(false)
 
