@@ -28,10 +28,6 @@ type Props = {
 export default async function Page({ params: { pageId } }: Props) {
 	const page = await getPageByIdUseCase({ getPageById }, { pageId })
 
-	const highestSortOrder = page.containers
-		?.map(page => page.sortOrder!)
-		?.sort((a, b) => b - a)[0]
-
 	return (
 		<Card>
 			<CardHeader className='px-7'>
@@ -39,10 +35,7 @@ export default async function Page({ params: { pageId } }: Props) {
 				<CardDescription>Containers for side: {page.name}</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<CreateContainerFormDialog
-					pageId={pageId}
-					sortOrder={highestSortOrder ? highestSortOrder + 1 : 0}
-				/>
+				<CreateContainerFormDialog pageId={pageId} />
 
 				<Table>
 					<TableHeader>

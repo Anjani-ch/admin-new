@@ -18,7 +18,6 @@ export type GetContainerForPage = {
 
 export type CreateContainerDto = {
 	name: string
-	sortOrder: number
 	active: boolean
 	pageId: string
 }

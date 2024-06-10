@@ -10,7 +10,6 @@ export const createContainerAction = createServerAction()
 	.input(
 		z.object({
 			name: z.string().min(1),
-			sortOrder: z.number(),
 			active: z.boolean(),
 			pageId: z.string(),
 		})

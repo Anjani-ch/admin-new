@@ -13,13 +13,9 @@ import CreateContainerForm from '@/components/form/CreateContainerForm'
 
 type Props = {
 	pageId: string
-	sortOrder: number
 }
 
-export default function CreateContainerFormDialog({
-	pageId,
-	sortOrder,
-}: Props) {
+export default function CreateContainerFormDialog({ pageId }: Props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -41,7 +37,6 @@ export default function CreateContainerFormDialog({
 						document.getElementById('closeDialog')?.click()
 					}}
 					pageId={pageId}
-					sortOrder={sortOrder}
 				/>
 			</DialogContent>
 		</Dialog>
