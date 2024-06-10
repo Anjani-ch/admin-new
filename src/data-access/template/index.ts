@@ -1,5 +1,5 @@
 import { getApiClient } from '@/lib/axios'
-import { GetAllTemplateVm } from '@/types/api/template'
+import { CreateTemplateDto, GetAllTemplateVm } from '@/types/api/template'
 
 export const getTemplates = async () => {
 	const client = await getApiClient()
@@ -7,4 +7,10 @@ export const getTemplates = async () => {
 	const { data } = await client.get<GetAllTemplateVm[]>('/api/template/all')
 
 	return data
+}
+
+export const createTemplate = async (dto: CreateTemplateDto) => {
+	const client = await getApiClient()
+
+	await client.post('/api/template', dto)
 }

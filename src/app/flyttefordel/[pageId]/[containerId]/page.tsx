@@ -26,6 +26,7 @@ import { getPageById } from '@/data-access/page'
 import { getContainerByIdUseCase } from '@/use-cases/container'
 import { getPageByIdUseCase } from '@/use-cases/page'
 import Link from 'next/link'
+import CreateTemplateFormDialog from './_components/CreateTemplateFormDialog'
 
 type Props = {
 	params: {
@@ -76,11 +77,14 @@ export default async function Page({ params: { containerId } }: Props) {
 				<CardHeader className='px-7'>
 					<CardTitle>Annonser</CardTitle>
 					<CardDescription>
-						Annonsers for container: {container.name}
+						Annonser for container: {container.name}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					{/* <CreateContainerFormDialog pageId={pageId} /> */}
+					<CreateTemplateFormDialog
+						pageId={page.pageId}
+						containerId={containerId}
+					/>
 
 					<Table>
 						<TableHeader>

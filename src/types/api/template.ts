@@ -36,3 +36,13 @@ export type GetTemplateForContainerVm = {
 	validToDate?: string
 	offers?: GetTemplateOfferForContainerVm[]
 }
+
+export type CreateTemplateDto = {
+	name: string
+	active: boolean
+	pageId: string
+}
+
+export enum TemplateType {
+	Offer = 1,
+}
