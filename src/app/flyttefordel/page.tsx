@@ -58,7 +58,7 @@ export default async function page() {
 								const canDelete =
 									containers.filter(
 										container => container.pageId === page.pageId
-									).length !== 0
+									).length === 0
 
 								return (
 									<TableRow
@@ -82,7 +82,7 @@ export default async function page() {
 											<DeletePageButton
 												pageName={page.name!}
 												pageId={page.pageId!}
-												disabled={canDelete}
+												disabled={!canDelete}
 											/>
 										</TableCell>
 									</TableRow>
