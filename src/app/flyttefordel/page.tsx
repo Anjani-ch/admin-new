@@ -27,8 +27,6 @@ import {
 	BreadcrumbItem,
 	BreadcrumbLink,
 	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 
 export default async function page() {
@@ -46,9 +44,7 @@ export default async function page() {
 			<Breadcrumb className='hidden md:flex mb-5'>
 				<BreadcrumbList>
 					<BreadcrumbItem>
-						<BreadcrumbLink asChild>
-							<Link href='/flyttefordel'>Flyttefordel</Link>
-						</BreadcrumbLink>
+						<BreadcrumbLink href='/flyttefordel'>Flyttefordel</BreadcrumbLink>
 					</BreadcrumbItem>
 				</BreadcrumbList>
 			</Breadcrumb>

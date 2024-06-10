@@ -41,14 +41,14 @@ export default async function Page({ params: { pageId } }: Props) {
 			<Breadcrumb className='hidden md:flex mb-5'>
 				<BreadcrumbList>
 					<BreadcrumbItem>
-						<BreadcrumbLink asChild>
-							<Link href='/flyttefordel'>Flyttefordel</Link>
-						</BreadcrumbLink>
+						<BreadcrumbLink href='/flyttefordel'>Flyttefordel</BreadcrumbLink>
+					</BreadcrumbItem>
 
-						<BreadcrumbSeparator />
+					<BreadcrumbSeparator />
 
-						<BreadcrumbLink asChild>
-							<Link href={`/flyttefordel/${page.pageId}`}>{page.name}</Link>
+					<BreadcrumbItem>
+						<BreadcrumbLink href={`/flyttefordel/${page.pageId}`}>
+							{page.name}
 						</BreadcrumbLink>
 					</BreadcrumbItem>
 				</BreadcrumbList>
