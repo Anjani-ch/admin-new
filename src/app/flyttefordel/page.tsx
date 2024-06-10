@@ -22,6 +22,14 @@ import { getContainersUseCase } from '@/use-cases/container'
 import { getContainers } from '@/data-access/container'
 import DeletePageButton from './_components/DeletePageButton'
 import { env } from 'next-runtime-env'
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 
 export default async function page() {
 	const pages = await getPagesUseCase(
@@ -34,63 +42,75 @@ export default async function page() {
 	const containers = await getContainersUseCase({ getContainers })
 
 	return (
-		<Card>
-			<CardHeader className='px-7'>
-				<CardTitle>Sider</CardTitle>
-				<CardDescription>Sider i flyttefordel løpet</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<CreatePageFormDialog />
+		<>
+			<Breadcrumb className='hidden md:flex mb-5'>
+				<BreadcrumbList>
+					<BreadcrumbItem>
+						<BreadcrumbLink asChild>
+							<Link href='/flyttefordel'>Flyttefordel</Link>
+						</BreadcrumbLink>
+					</BreadcrumbItem>
+				</BreadcrumbList>
+			</Breadcrumb>
 
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead>Navn</TableHead>
-							<TableHead>Status</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{pages
-							.sort((a, b) => a.sortOrder! - b.sortOrder!)
-							.map(page => {
-								// There is a business rule in backend API that you cannot delete page without deleting
-								// all connected containers first
-								const canDelete =
-									containers.filter(
-										container => container.pageId === page.pageId
-									).length === 0
+			<Card>
+				<CardHeader className='px-7'>
+					<CardTitle>Sider</CardTitle>
+					<CardDescription>Sider i flyttefordel løpet</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<CreatePageFormDialog />
 
-								return (
-									<TableRow
-										key={page.pageId}
-										className='bg-accent'
-									>
-										<TableCell className='font-medium'>
-											<Link href={`/flyttefordel/${page.pageId}`}>
-												{page.name}
-											</Link>
-										</TableCell>
-										<TableCell>
-											<Badge
-												className='text-xs'
-												variant={page.active ? 'default' : 'secondary'}
-											>
-												{page.active ? 'Aktiv' : 'Inaktiv'}
-											</Badge>
-										</TableCell>
-										<TableCell>
-											<DeletePageButton
-												pageName={page.name!}
-												pageId={page.pageId!}
-												disabled={!canDelete}
-											/>
-										</TableCell>
-									</TableRow>
-								)
-							})}
-					</TableBody>
-				</Table>
-			</CardContent>
-		</Card>
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Navn</TableHead>
+								<TableHead>Status</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{pages
+								.sort((a, b) => a.sortOrder! - b.sortOrder!)
+								.map(page => {
+									// There is a business rule in backend API that you cannot delete page without deleting
+									// all connected containers first
+									const canDelete =
+										containers.filter(
+											container => container.pageId === page.pageId
+										).length === 0
+
+									return (
+										<TableRow
+											key={page.pageId}
+											className='bg-accent'
+										>
+											<TableCell className='font-medium'>
+												<Link href={`/flyttefordel/${page.pageId}`}>
+													{page.name}
+												</Link>
+											</TableCell>
+											<TableCell>
+												<Badge
+													className='text-xs'
+													variant={page.active ? 'default' : 'secondary'}
+												>
+													{page.active ? 'Aktiv' : 'Inaktiv'}
+												</Badge>
+											</TableCell>
+											<TableCell>
+												<DeletePageButton
+													pageName={page.name!}
+													pageId={page.pageId!}
+													disabled={!canDelete}
+												/>
+											</TableCell>
+										</TableRow>
+									)
+								})}
+						</TableBody>
+					</Table>
+				</CardContent>
+			</Card>
+		</>
 	)
 }
