@@ -43,10 +43,11 @@ import {
 } from '@/components/ui/form'
 import { useCallback } from 'react'
 import Combobox from '@/components/form-control/Combobox'
-import { take } from 'lodash'
 import { bytesToMb } from '@/lib/utils'
+import { updateTemplateAction } from '../_actions/updateTemplateAction'
 
 type Props = {
+	pageId: string
 	template: GetTemplateByKeyVm
 	products: {
 		name: string
@@ -62,12 +63,14 @@ const formSchema = z.object({
 	active: z.boolean(),
 	header: z.string().trim().min(1),
 	text: z.string().trim().min(1).max(256),
-	logo: z.object({
-		name: z.string(),
-		url: z.string().min(1),
-	}),
+	logo: z
+		.object({
+			name: z.string().min(1),
+			url: z.string().min(1),
+		})
+		.or(z.string()),
 	validToDate: z.date(),
-	terms: z.string().nullable(),
+	terms: z.string(),
 	offers: z.array(
 		z.object({
 			name: z.string().trim().min(1),
@@ -82,7 +85,7 @@ const formSchema = z.object({
 	),
 })
 
-export default function TemplateEditor({ template, products }: Props) {
+export default function TemplateEditor({ template, products, pageId }: Props) {
 	const form = useForm<FormSchema>({
 		mode: 'all',
 		resolver: zodResolver(formSchema),
@@ -92,11 +95,12 @@ export default function TemplateEditor({ template, products }: Props) {
 			name: template.name || '',
 			header: template.header || '',
 			text: template.text || '',
-			logo: {
+			logo: template.logo || {
 				name: '',
-				url: template.logo,
+				url: '',
 			},
 			validToDate: new Date(template.validToDate!),
+			terms: '',
 		},
 	})
 
@@ -115,14 +119,21 @@ export default function TemplateEditor({ template, products }: Props) {
 		name: 'logo',
 	})
 
-	const onSubmit: SubmitHandler<FormSchema> = useCallback(values => {
-		const data = {
-			...values,
-			validToDate: values.noExpiry
-				? new Date('9999-01-01')
-				: values.validToDate,
-		}
-	}, [])
+	const onSubmit: SubmitHandler<FormSchema> = useCallback(
+		async values => {
+			const [, err] = await updateTemplateAction({
+				pageId,
+				...template,
+				containerId: template.containerId!,
+				...values,
+				validToDate: values.noExpiry
+					? new Date('9999-01-01')
+					: values.validToDate,
+				templateId: template.templateId!,
+			})
+		},
+		[pageId, template]
+	)
 
 	return (
 		<Form {...form}>
@@ -186,7 +197,11 @@ export default function TemplateEditor({ template, products }: Props) {
 
 							<CardContent>
 								<FileUpload
-									imageUrl={templateLogoWatch.url}
+									imageUrl={
+										typeof templateLogoWatch === 'string'
+											? templateLogoWatch
+											: templateLogoWatch.url
+									}
 									onFileSelect={({ file, dataUrl }) => {
 										// Check if file is maximum 1 MB
 										if (parseFloat(bytesToMb(file.size)) > 1) {

@@ -75,6 +75,7 @@ export default async function Page({ params: { templateId } }: Props) {
 			</Breadcrumb>
 
 			<TemplateEditor
+				pageId={page.pageId}
 				template={template}
 				products={products.map(product => ({
 					name: product.name!,

@@ -1,9 +1,12 @@
 import { getApiClient } from '@/lib/axios'
 import {
+	CreateTemplateBlobDto,
 	CreateTemplateDto,
 	GetAllTemplateVm,
 	GetTemplateByKeyVm,
+	UpdateTemplateDto,
 } from '@/types/api/template'
+import { isAxiosError } from 'axios'
 
 export const getTemplates = async () => {
 	const client = await getApiClient()
@@ -31,6 +34,20 @@ export const createTemplate = async (dto: CreateTemplateDto) => {
 			.split('/')
 			.pop()!,
 	}
+}
+
+export const updateTemplate = async (
+	dto: UpdateTemplateDto & { templateId: string }
+) => {
+	const client = await getApiClient()
+
+	await client.put(`api/template/${dto.templateId}`, dto)
+}
+
+export const updateTemplateLogo = async (dto: CreateTemplateBlobDto) => {
+	const client = await getApiClient()
+
+	await client.post('/api/template/blob', dto)
 }
 
 export const deleteTemplateById = async (id: string) => {

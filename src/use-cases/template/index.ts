@@ -1,10 +1,16 @@
-import { CreateTemplateDto } from '@/types/api/template'
+import {
+	CreateTemplateBlobDto,
+	CreateTemplateDto,
+	UpdateTemplateDto,
+} from '@/types/api/template'
 import {
 	CreateTemplate,
 	GetTemplates,
 	DeleteTemplateById,
 	GetTemplateOffers,
 	GetTemplateById,
+	UpdateTemplate,
+	UpdateTemplateLogo,
 } from './types'
 
 export const getTemplatesUseCase = async (context: {
@@ -25,6 +31,25 @@ export const createTemplateUseCase = async (
 	data: CreateTemplateDto
 ) => {
 	return await context.createTemplate(data)
+}
+
+export const updateTemplateUseCase = async (
+	context: {
+		updateTemplate: UpdateTemplate
+		updateTemplateLogo?: UpdateTemplateLogo
+	},
+	data: UpdateTemplateDto & { templateId: string }
+) => {
+	await context.updateTemplate(data)
+}
+
+export const updateTemplateBlobUseCase = async (
+	context: {
+		updateTemplateLogo: UpdateTemplateLogo
+	},
+	data: CreateTemplateBlobDto
+) => {
+	await context.updateTemplateLogo(data)
 }
 
 export const deleteTemplateUseCase = async (

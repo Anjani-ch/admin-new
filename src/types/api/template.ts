@@ -1,8 +1,12 @@
 import {
 	GetTemplateOfferForContainerVm,
 	GetTemplateOfferForTemplateVm,
+	UpdateTemplateTemplateOfferDto,
 } from './templateOffer'
-import { CommonTemplatePostCodesVm } from './templatePostCodes'
+import {
+	CommonTemplatePostCodesVm,
+	UpdateTemplateTemplatePostCodesDto,
+} from './templatePostCodes'
 
 export type GetAllTemplateVm = {
 	templateId: string
@@ -70,7 +74,24 @@ export type CreateTemplateDto = {
 	pageId: string
 }
 
-export type CreateBlobDto = {
+export type UpdateTemplateDto = {
+	templateTypeId?: number
+	name?: string
+	sortOrder?: number
+	active: boolean
+	header?: string
+	text?: string
+	validToDate?: string
+	limitDays: number
+	segmentation?: string
+	terms?: string
+	confirmText?: string
+	confirmButtonText?: string
+	offers?: UpdateTemplateTemplateOfferDto[]
+	postCodes?: UpdateTemplateTemplatePostCodesDto
+}
+
+export type CreateTemplateBlobDto = {
 	name: string
 	content: string
 	templateId: string
