@@ -34,3 +34,12 @@ export type GetTemplateOfferForContainerVm = {
 	changedDate?: string
 	product?: GetProductForContainerVm
 }
+
+export type UpdateTemplateTemplateOfferDto = {
+	name: string
+	productId: string
+	sortOrder: number
+	text?: string
+	price: number
+	templateOfferId: string
+}
