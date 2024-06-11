@@ -27,6 +27,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { TemplateType } from '@/types/api/template'
 import { templateTypes } from '@/constants/template'
 import { DatePicker } from '@/components/form-control/DatePicker'
+import { useRouter } from 'next/navigation'
 
 type Props = {
 	pageId: string
@@ -38,7 +39,6 @@ type FormSchema = z.infer<typeof formSchema>
 
 const formSchema = z.object({
 	name: z.string().min(1),
-	active: z.boolean(),
 	validToDate: z.date(),
 	noExpiry: z.boolean(),
 	templateTypeId: z.number(),
@@ -50,12 +50,12 @@ export default function CreateTemplateForm({
 	afterSubmit,
 }: Props) {
 	const { toast } = useToast()
+	const router = useRouter()
 
 	const form = useForm<FormSchema>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			name: '',
-			active: false,
 			validToDate: new Date(),
 			templateTypeId: TemplateType.Offer,
 			noExpiry: false,
@@ -69,7 +69,7 @@ export default function CreateTemplateForm({
 
 	const onSubmit: SubmitHandler<FormSchema> = useCallback(
 		async values => {
-			const [, err] = await createTemplateAction({
+			const [res, err] = await createTemplateAction({
 				...values,
 				validToDate: values.noExpiry
 					? new Date('9999-01-01')
@@ -91,8 +91,12 @@ export default function CreateTemplateForm({
 			}
 
 			if (afterSubmit) afterSubmit()
+
+			if (!res) return
+
+			router.push(`/flyttefordel/${pageId}/${containerId}/${res.templateId}`)
 		},
-		[afterSubmit, containerId, pageId, toast]
+		[afterSubmit, containerId, pageId, router, toast]
 	)
 
 	return (
@@ -183,28 +187,6 @@ export default function CreateTemplateForm({
 						render={({ field }) => (
 							<FormItem className='mb-4'>
 								<FormLabel className='block'>Uten utløp</FormLabel>
-
-								<FormControl>
-									<Switch
-										checked={field.value}
-										onCheckedChange={field.onChange}
-									/>
-								</FormControl>
-							</FormItem>
-						)}
-					/>
-
-					<FormField
-						control={form.control}
-						name='active'
-						render={({ field }) => (
-							<FormItem className='mb-4'>
-								<FormLabel>Aktiv</FormLabel>
-
-								<FormDescription>
-									Aktiv betyr at det blir synlig for brukere som går gjennom
-									flyttefordel
-								</FormDescription>
 
 								<FormControl>
 									<Switch

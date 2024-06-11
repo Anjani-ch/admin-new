@@ -4,6 +4,7 @@ import { templateTypes } from '@/constants/template'
 import { createTemplate } from '@/data-access/template'
 import { createTemplateUseCase } from '@/use-cases/template'
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { createServerAction } from 'zsa'
 
@@ -15,13 +16,25 @@ export const createTemplateAction = createServerAction()
 				.number()
 				.refine(val => Object.keys(templateTypes).includes(val.toString())),
 			name: z.string().min(1),
-			active: z.boolean(),
 			validToDate: z.date(),
 			pageId: z.string(),
 		})
 	)
+	.output(
+		z.object({
+			templateId: z.string(),
+		})
+	)
 	.handler(async ({ input }) => {
-		await createTemplateUseCase({ createTemplate }, input)
+		const { templateId } = await createTemplateUseCase(
+			{ createTemplate },
+			{
+				...input,
+				active: false,
+			}
+		)
 
 		revalidatePath(`/flyttefordel/${input.pageId}/${input.containerId}`)
+
+		return { templateId }
 	})
