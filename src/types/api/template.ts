@@ -70,6 +70,13 @@ export type CreateTemplateDto = {
 	pageId: string
 }
 
+export type CreateBlobDto = {
+	name: string
+	content: string
+	templateId: string
+	isLogo2: boolean
+}
+
 export enum TemplateType {
 	Offer = 1,
 }

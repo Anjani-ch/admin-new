@@ -25,7 +25,7 @@ export function DatePicker({ value, onChange, disabled }: Props) {
 			<PopoverTrigger asChild>
 				<Button
 					variant={'outline'}
-					className={cn('w-[17.5rem] justify-start text-left font-normal')}
+					className={cn('w-full justify-start text-left font-normal')}
 				>
 					{value ? format(value, 'PPP') : <span>Pick a date</span>}
 					<CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
