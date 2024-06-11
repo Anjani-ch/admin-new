@@ -23,7 +23,10 @@ export default function FileUpload({
 				/>
 			)}
 
-			<Button className='p-0 h-auto'>
+			<Button
+				type='button'
+				className='p-0 h-auto'
+			>
 				<label
 					className='py-2 px-4 cursor-pointer flex items-center gap-3'
 					htmlFor={id}

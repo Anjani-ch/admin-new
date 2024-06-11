@@ -12,6 +12,8 @@ import { getContainerByIdUseCase } from '@/use-cases/container'
 import { getPageByIdUseCase } from '@/use-cases/page'
 import { getTemplateByIdUseCase } from '@/use-cases/template'
 import TemplateEditor from './_components/TemplateEditor'
+import { getProductsUseCase } from '@/use-cases/product'
+import { getProducts } from '@/data-access/product'
 
 type Props = {
 	params: {
@@ -32,6 +34,7 @@ export default async function Page({ params: { templateId } }: Props) {
 		{ getPageById },
 		{ pageId: container.pageId! }
 	)
+	const products = await getProductsUseCase({ getProducts })
 
 	return (
 		<>
@@ -71,7 +74,13 @@ export default async function Page({ params: { templateId } }: Props) {
 				</BreadcrumbList>
 			</Breadcrumb>
 
-			<TemplateEditor template={template} />
+			<TemplateEditor
+				template={template}
+				products={products.map(product => ({
+					name: product.name!,
+					productId: product.productId!,
+				}))}
+			/>
 		</>
 	)
 }
