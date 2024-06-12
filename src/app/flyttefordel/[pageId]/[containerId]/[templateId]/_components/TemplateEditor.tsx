@@ -23,7 +23,6 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { templateTypes } from '@/constants/template'
 import { GetTemplateByKeyVm, TemplateType } from '@/types/api/template'
-import { PlusCircle } from 'lucide-react'
 import {
 	SubmitHandler,
 	useFieldArray,
@@ -58,6 +57,7 @@ import CopyTemplateButton from './CopyTemplateButton'
 import DeleteTemplateButton from './DeleteTemplateButton'
 import AddTemplateOfferFormDialog from './AddTemplateOfferFormDialog'
 import { GetAllProductsVm } from '@/types/api/product'
+import EditTermsFormDialog from './EditTermsFormDialog'
 
 type Props = {
 	pageId: string
@@ -119,7 +119,7 @@ export default function TemplateEditor({
 				url: '',
 			},
 			validToDate: new Date(template.validToDate!),
-			terms: '',
+			terms: template.terms || '',
 		},
 	})
 
@@ -140,7 +140,7 @@ export default function TemplateEditor({
 
 	const onSubmit: SubmitHandler<FormSchema> = useCallback(
 		async values => {
-			const [, err] = await updateTemplateAction({
+			await updateTemplateAction({
 				pageId,
 				...template,
 				containerId: template.containerId!,
@@ -241,7 +241,7 @@ export default function TemplateEditor({
 												name: file.name,
 												url: dataUrl,
 											},
-											{ shouldValidate: true }
+											{ shouldValidate: true, shouldDirty: true }
 										)
 									}}
 								/>
@@ -324,6 +324,17 @@ export default function TemplateEditor({
 											</FormControl>
 										</FormItem>
 									)}
+								/>
+
+								<EditTermsFormDialog
+									terms={template.terms}
+									onSubmit={({ terms }) => {
+										console.log(terms)
+										form.setValue('terms', terms, {
+											shouldValidate: true,
+											shouldDirty: true,
+										})
+									}}
 								/>
 
 								<Accordion
@@ -420,7 +431,7 @@ export default function TemplateEditor({
 															name: option.label,
 															productId: option.id.toString(),
 														},
-														{ shouldValidate: true }
+														{ shouldValidate: true, shouldDirty: true }
 													)
 												}}
 											/>
