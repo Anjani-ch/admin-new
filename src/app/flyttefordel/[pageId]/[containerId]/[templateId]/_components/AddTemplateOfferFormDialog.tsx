@@ -9,7 +9,6 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
@@ -20,7 +19,13 @@ import { useCallback } from 'react'
 import Combobox from '@/components/form-control/Combobox'
 import { GetAllProductsVm } from '@/types/api/product'
 import { createTemplateOfferAction } from '../_actions/createTemplateOfferAction'
-import { GetAllTemplateOfferVm } from '@/types/api/templateOffer'
+import {
+	Form,
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormField,
+} from '@/components/ui/form'
 
 type Props = {
 	products: Pick<GetAllProductsVm, 'name' | 'productId'>[]
@@ -53,13 +58,7 @@ export default function AddTemplateOfferFormDialog({
 }: Props) {
 	const params = useParams()
 
-	const {
-		register,
-		handleSubmit,
-		setValue,
-		reset,
-		formState: { isValid, isSubmitting },
-	} = useForm<FormSchema>({
+	const form = useForm<FormSchema>({
 		mode: 'all',
 		resolver: zodResolver(zodSchema),
 		defaultValues: {
@@ -72,7 +71,7 @@ export default function AddTemplateOfferFormDialog({
 
 	const submitHandler: SubmitHandler<FormSchema> = useCallback(
 		async values => {
-			const [res, err] = await createTemplateOfferAction({
+			const [res] = await createTemplateOfferAction({
 				...values,
 				productId: values.product.productId,
 				sortOrder,
@@ -91,7 +90,7 @@ export default function AddTemplateOfferFormDialog({
 	return (
 		<Dialog
 			onOpenChange={open => {
-				if (!open) reset()
+				if (!open) form.reset()
 			}}
 		>
 			<DialogTrigger asChild>
@@ -111,67 +110,94 @@ export default function AddTemplateOfferFormDialog({
 					<DialogTitle>Legg til tilbud</DialogTitle>
 				</DialogHeader>
 
-				<div>
-					<Label htmlFor='template-offer-dialog-name'>Navn</Label>
-					<Input
-						id='template-offer-dialog-name'
-						{...register('name')}
+				<Form {...form}>
+					<FormField
+						control={form.control}
+						name='name'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Navn</FormLabel>
+								<FormControl>
+									<Input {...field} />
+								</FormControl>
+							</FormItem>
+						)}
 					/>
-				</div>
 
-				<div>
-					<Label
-						htmlFor='template-offer-dialog-product'
-						className='block'
+					<FormField
+						control={form.control}
+						name='product'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Produkt</FormLabel>
+
+								<Combobox
+									defaultValue={{
+										label: field.value.name,
+										value: field.value.productId,
+										id: field.value.productId,
+									}}
+									options={products.map(product => ({
+										label: product.name!,
+										value: product.productId,
+										id: product.productId!,
+									}))}
+									onSelect={option => {
+										field.onChange({
+											name: option.label,
+											productId: option.id.toString(),
+										})
+									}}
+								/>
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name='text'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Tekst</FormLabel>
+
+								<FormControl>
+									<Textarea {...field} />
+								</FormControl>
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name='price'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Pris</FormLabel>
+
+								<FormControl>
+									<Input
+										type='number'
+										{...field}
+										onChange={e =>
+											field.onChange(
+												e.target.value ? parseFloat(e.target.value) : 0
+											)
+										}
+									/>
+								</FormControl>
+							</FormItem>
+						)}
+					/>
+
+					<Button
+						type='button'
+						onClick={form.handleSubmit(submitHandler)}
+						disabled={!form.formState.isValid}
+						loading={form.formState.isSubmitting}
 					>
-						Produkt
-					</Label>
-					<Combobox
-						options={products.map(product => ({
-							label: product.name!,
-							value: product.productId,
-							id: product.productId!,
-						}))}
-						onSelect={option => {
-							setValue(
-								'product',
-								{
-									name: option.label,
-									productId: option.id.toString(),
-								},
-								{
-									shouldValidate: true,
-								}
-							)
-						}}
-					/>
-				</div>
-
-				<div>
-					<Label htmlFor='template-offer-dialog-text'>Tekst</Label>
-					<Textarea
-						id='template-offer-dialog-text'
-						{...register('text')}
-					/>
-				</div>
-
-				<div>
-					<Label htmlFor='template-offer-dialog-number'>Pris</Label>
-					<Input
-						id='template-offer-dialog-number'
-						type='number'
-						{...register('price', { valueAsNumber: true })}
-					/>
-				</div>
-
-				<Button
-					type='button'
-					onClick={handleSubmit(submitHandler)}
-					disabled={!isValid}
-					loading={isSubmitting}
-				>
-					Lagre
-				</Button>
+						Lagre
+					</Button>
+				</Form>
 			</DialogContent>
 		</Dialog>
 	)
