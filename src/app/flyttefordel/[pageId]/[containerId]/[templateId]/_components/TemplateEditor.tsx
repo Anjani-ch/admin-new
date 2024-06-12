@@ -56,14 +56,13 @@ import { GetAllPagesVm } from '@/types/api/page'
 import { GetAllContainersVm } from '@/types/api/container'
 import CopyTemplateButton from './CopyTemplateButton'
 import DeleteTemplateButton from './DeleteTemplateButton'
+import AddTemplateOfferFormDialog from './AddTemplateOfferFormDialog'
+import { GetAllProductsVm } from '@/types/api/product'
 
 type Props = {
 	pageId: string
 	template: GetTemplateByKeyVm
-	products: {
-		name: string
-		productId: string
-	}[]
+	products: Pick<GetAllProductsVm, 'name' | 'productId'>[]
 	pages: GetAllPagesVm[]
 	containers: GetAllContainersVm[]
 }
@@ -94,6 +93,7 @@ const formSchema = z.object({
 				name: z.string().trim().min(1),
 				productId: z.string(),
 			}),
+			templateOfferId: z.string(),
 		})
 	),
 })
@@ -149,6 +149,10 @@ export default function TemplateEditor({
 					? new Date('9999-01-01')
 					: values.validToDate,
 				templateId: template.templateId!,
+				offers: values.offers.map(offer => ({
+					...offer,
+					productId: offer.product.productId,
+				})),
 			})
 		},
 		[pageId, template]
@@ -170,7 +174,7 @@ export default function TemplateEditor({
 					</Button>
 				</div>
 
-				<div className='grid grid-cols-4 gap-8'>
+				<div className='grid grid-cols-4 gap-8 mb-8'>
 					<div className='col-span-3'>
 						<Card className='mb-8'>
 							<CardContent className='py-4 flex gap-4 items-center justify-between'>
@@ -279,116 +283,6 @@ export default function TemplateEditor({
 								/>
 							</CardContent>
 						</Card>
-
-						<Card>
-							<CardHeader>
-								<CardTitle>Tilbud</CardTitle>
-								<CardDescription>
-									Tilbud knyttet til annonse. Dette er det kunden kan bestille.
-								</CardDescription>
-							</CardHeader>
-
-							<CardContent>
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>Name</TableHead>
-											<TableHead className='max-w-32'>Tekst</TableHead>
-											<TableHead>Produkt</TableHead>
-											<TableHead>Produkt ID</TableHead>
-											<TableHead>Pris</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{templateOffersFieldArray.fields.map((offer, index) => (
-											<TableRow key={offer.id}>
-												<TableCell>
-													<FormField
-														control={form.control}
-														name={`offers.${index}.name`}
-														render={({ field }) => <Input {...field} />}
-													/>
-												</TableCell>
-												<TableCell>
-													<FormField
-														control={form.control}
-														name={`offers.${index}.text`}
-														render={({ field }) => <Textarea {...field} />}
-													/>
-												</TableCell>
-												<TableCell>
-													<Combobox
-														options={products.map(product => ({
-															label: product.name,
-															value: product,
-															id: product.productId,
-														}))}
-														onSelect={option => {
-															if (!option) return
-
-															form.setValue(
-																`offers.${index}.product`,
-																{
-																	name: option.label,
-																	productId: option.id.toString(),
-																},
-																{ shouldValidate: true }
-															)
-														}}
-													/>
-												</TableCell>
-												<TableCell>
-													<Input
-														value={offer.product.productId}
-														readOnly
-														disabled
-													/>
-												</TableCell>
-												<TableCell>
-													<FormField
-														control={form.control}
-														name={`offers.${index}.price`}
-														render={({ field }) => (
-															<Input
-																type='number'
-																{...field}
-																onChange={e => {
-																	field.onChange(parseInt(e.target.value))
-																}}
-															/>
-														)}
-													/>
-												</TableCell>
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</CardContent>
-
-							<CardFooter className='border-t px-4 py-2'>
-								<Button
-									size='sm'
-									variant='ghost'
-									className='gap-1'
-									type='button'
-									onClick={() => {
-										templateOffersFieldArray.append({
-											name: '',
-											price: 0,
-											product: {
-												name: '',
-												productId: '',
-											},
-											sortOrder: templateOffersFieldArray.fields.length + 1,
-											text: '',
-										})
-									}}
-								>
-									<PlusCircle className='h-3.5 w-3.5' />
-									Legg til tilbud
-								</Button>
-							</CardFooter>
-						</Card>
 					</div>
 
 					<Card>
@@ -461,7 +355,6 @@ export default function TemplateEditor({
 											<MoveTemplateDialog
 												pages={pages}
 												containers={containers}
-												templateId={template.templateId!}
 											/>
 
 											<CopyTemplateButton />
@@ -474,6 +367,104 @@ export default function TemplateEditor({
 						</CardContent>
 					</Card>
 				</div>
+
+				<Card>
+					<CardHeader>
+						<CardTitle>Tilbud</CardTitle>
+						<CardDescription>
+							Tilbud knyttet til annonse. Dette er det kunden kan bestille.
+						</CardDescription>
+					</CardHeader>
+
+					<CardContent>
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead>Name</TableHead>
+									<TableHead className='max-w-32'>Tekst</TableHead>
+									<TableHead>Produkt</TableHead>
+									<TableHead>Produkt ID</TableHead>
+									<TableHead>Pris</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{templateOffersFieldArray.fields.map((offer, index) => (
+									<TableRow key={offer.id}>
+										<TableCell>
+											<FormField
+												control={form.control}
+												name={`offers.${index}.name`}
+												render={({ field }) => <Input {...field} />}
+											/>
+										</TableCell>
+										<TableCell>
+											<FormField
+												control={form.control}
+												name={`offers.${index}.text`}
+												render={({ field }) => <Textarea {...field} />}
+											/>
+										</TableCell>
+										<TableCell>
+											<Combobox
+												options={products.map(product => ({
+													label: product.name!,
+													value: product.productId,
+													id: product.productId!,
+												}))}
+												onSelect={option => {
+													if (!option) return
+
+													form.setValue(
+														`offers.${index}.product`,
+														{
+															name: option.label,
+															productId: option.id.toString(),
+														},
+														{ shouldValidate: true }
+													)
+												}}
+											/>
+										</TableCell>
+										<TableCell>
+											<Input
+												value={offer.product.productId}
+												readOnly
+												disabled
+											/>
+										</TableCell>
+										<TableCell>
+											<FormField
+												control={form.control}
+												name={`offers.${index}.price`}
+												render={({ field }) => (
+													<Input
+														type='number'
+														{...field}
+														onChange={e => {
+															field.onChange(parseInt(e.target.value))
+														}}
+													/>
+												)}
+											/>
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</CardContent>
+
+					<CardFooter className='border-t px-4 py-2'>
+						<AddTemplateOfferFormDialog
+							products={products}
+							sortOrder={templateOffersFieldArray.fields.length + 1}
+							onSubmit={data => {
+								document.getElementById('closeDialog')?.click()
+
+								templateOffersFieldArray.append(data)
+							}}
+						/>
+					</CardFooter>
+				</Card>
 			</form>
 		</Form>
 	)

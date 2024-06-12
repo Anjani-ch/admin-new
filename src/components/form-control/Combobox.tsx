@@ -48,14 +48,14 @@ export default function Combobox({ options, onSelect }: Props) {
 					variant='outline'
 					role='combobox'
 					aria-expanded={open}
-					className='justify-between'
+					className='justify-between w-full'
 				>
 					{option ? option.label : 'Velg noe...'}
 					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className='p-0'>
-				<Command>
+			<PopoverContent className='p-0 w-full'>
+				<Command className='w-full'>
 					<CommandInput placeholder='Søk resultat...' />
 					<CommandEmpty>Ingen resultater funnet.</CommandEmpty>
 					<CommandGroup>

@@ -43,3 +43,12 @@ export type UpdateTemplateTemplateOfferDto = {
 	price: number
 	templateOfferId: string
 }
+
+export type CreateTemplateOfferDto = {
+	name: string
+	productId: string
+	sortOrder: number
+	text?: string
+	price: number
+	templateId: string
+}

@@ -1,5 +1,8 @@
 import { getApiClient } from '@/lib/axios'
-import { GetAllTemplateOfferVm } from '@/types/api/templateOffer'
+import {
+	CreateTemplateOfferDto,
+	GetAllTemplateOfferVm,
+} from '@/types/api/templateOffer'
 
 export const getTemplateOffers = async () => {
 	const client = await getApiClient()
@@ -9,4 +12,16 @@ export const getTemplateOffers = async () => {
 	)
 
 	return data
+}
+
+export const createTemplateOffer = async (dto: CreateTemplateOfferDto) => {
+	const client = await getApiClient()
+
+	const { headers } = await client.post('/api/templateoffer', dto)
+
+	return {
+		templateOfferId: (headers.get as (headerName: string) => string)('location')
+			.split('/')
+			.pop()!,
+	}
 }
