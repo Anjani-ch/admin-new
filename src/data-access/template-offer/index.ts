@@ -25,3 +25,9 @@ export const createTemplateOffer = async (dto: CreateTemplateOfferDto) => {
 			.pop()!,
 	}
 }
+
+export const deleteTemplateOffer = async (id: string) => {
+	const client = await getApiClient()
+
+	await client.delete(`/api/templateoffer/${id}`)
+}

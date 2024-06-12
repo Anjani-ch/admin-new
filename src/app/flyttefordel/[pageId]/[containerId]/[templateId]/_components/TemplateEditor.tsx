@@ -58,9 +58,18 @@ import DeleteTemplateButton from './DeleteTemplateButton'
 import AddTemplateOfferFormDialog from './AddTemplateOfferFormDialog'
 import { GetAllProductsVm } from '@/types/api/product'
 import EditTermsFormDialog from './EditTermsFormDialog'
+import { useParams } from 'next/navigation'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { MoreHorizontal } from 'lucide-react'
+import DeleteTemplateOfferButton from './DeleteTemplateOfferButton'
 
 type Props = {
-	pageId: string
 	template: GetTemplateByKeyVm
 	products: Pick<GetAllProductsVm, 'name' | 'productId'>[]
 	pages: GetAllPagesVm[]
@@ -101,10 +110,11 @@ const formSchema = z.object({
 export default function TemplateEditor({
 	template,
 	products,
-	pageId,
 	pages,
 	containers,
 }: Props) {
+	const params = useParams()
+
 	const form = useForm<FormSchema>({
 		mode: 'all',
 		resolver: zodResolver(formSchema),
@@ -141,7 +151,7 @@ export default function TemplateEditor({
 	const onSubmit: SubmitHandler<FormSchema> = useCallback(
 		async values => {
 			await updateTemplateAction({
-				pageId,
+				pageId: params.pageId as string,
 				...template,
 				containerId: template.containerId!,
 				...values,
@@ -155,7 +165,7 @@ export default function TemplateEditor({
 				})),
 			})
 		},
-		[pageId, template]
+		[params.pageId, template]
 	)
 
 	return (
@@ -329,7 +339,6 @@ export default function TemplateEditor({
 								<EditTermsFormDialog
 									terms={template.terms}
 									onSubmit={({ terms }) => {
-										console.log(terms)
 										form.setValue('terms', terms, {
 											shouldValidate: true,
 											shouldDirty: true,
@@ -396,6 +405,9 @@ export default function TemplateEditor({
 									<TableHead>Produkt</TableHead>
 									<TableHead>Produkt ID</TableHead>
 									<TableHead>Pris</TableHead>
+									<TableHead>
+										<span className='sr-only'>Handlinger</span>
+									</TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
@@ -457,6 +469,31 @@ export default function TemplateEditor({
 													/>
 												)}
 											/>
+										</TableCell>
+										<TableCell>
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button
+														aria-haspopup='true'
+														size={'icon'}
+														variant={'ghost'}
+													>
+														<MoreHorizontal className='h-4 w-4' />
+														<span className='sr-only'>Bruke meny</span>
+													</Button>
+												</DropdownMenuTrigger>
+
+												<DropdownMenuContent align='end'>
+													<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
+													<DropdownMenuSeparator />
+													<DeleteTemplateOfferButton
+														templateOfferId={offer.templateOfferId}
+														afterDelete={() => {
+															templateOffersFieldArray.remove(index)
+														}}
+													/>
+												</DropdownMenuContent>
+											</DropdownMenu>
 										</TableCell>
 									</TableRow>
 								))}

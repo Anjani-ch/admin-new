@@ -84,7 +84,6 @@ export default async function Page({ params: { templateId } }: Props) {
 			</Breadcrumb>
 
 			<TemplateEditor
-				pageId={page.pageId}
 				template={template}
 				pages={pages.sort((a, b) => a.sortOrder! - b.sortOrder!)}
 				containers={containers.sort((a, b) => a.sortOrder! - b.sortOrder!)}
