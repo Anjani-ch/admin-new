@@ -19,3 +19,7 @@ export type DeleteTemplateById = (id: string) => Promise<void>
 export type GetTemplateOffers = () => Promise<GetAllTemplateOfferVm[]>
 export type GetTemplateById = (id: string) => Promise<GetTemplateByKeyVm>
 export type DuplicateTemplate = (id: string) => Promise<{ templateId: string }>
+export type MoveTemplate = (data: {
+	templateId: string
+	containerId: string
+}) => Promise<void>

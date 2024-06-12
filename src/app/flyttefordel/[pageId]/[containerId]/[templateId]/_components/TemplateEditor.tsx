@@ -56,6 +56,9 @@ import { duplicateTemplateAction } from '../_actions/duplicateTemplateAction'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
 import { ToastAction } from '@/components/ui/toast'
+import MoveTemplateDialog from './MoveTemplateDialog'
+import { GetAllPagesVm } from '@/types/api/page'
+import { GetAllContainersVm } from '@/types/api/container'
 
 type Props = {
 	pageId: string
@@ -64,6 +67,8 @@ type Props = {
 		name: string
 		productId: string
 	}[]
+	pages: GetAllPagesVm[]
+	containers: GetAllContainersVm[]
 }
 
 type FormSchema = z.infer<typeof formSchema>
@@ -96,7 +101,13 @@ const formSchema = z.object({
 	),
 })
 
-export default function TemplateEditor({ template, products, pageId }: Props) {
+export default function TemplateEditor({
+	template,
+	products,
+	pageId,
+	pages,
+	containers,
+}: Props) {
 	const router = useRouter()
 	const { toast } = useToast()
 
@@ -452,6 +463,12 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 									<AccordionItem value='item-2'>
 										<AccordionTrigger>Meta innstillinger</AccordionTrigger>
 										<AccordionContent className='flex flex-col gap-4'>
+											<MoveTemplateDialog
+												pages={pages}
+												containers={containers}
+												templateId={template.templateId!}
+											/>
+
 											<Button
 												type='button'
 												className='w-full'

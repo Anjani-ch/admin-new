@@ -5,15 +5,19 @@ import {
 	BreadcrumbList,
 	BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { getContainerById } from '@/data-access/container'
-import { getPageById } from '@/data-access/page'
+import { getContainerById, getContainers } from '@/data-access/container'
+import { getPageById, getPages } from '@/data-access/page'
 import { getTemplateById } from '@/data-access/template'
-import { getContainerByIdUseCase } from '@/use-cases/container'
-import { getPageByIdUseCase } from '@/use-cases/page'
+import {
+	getContainerByIdUseCase,
+	getContainersUseCase,
+} from '@/use-cases/container'
+import { getPageByIdUseCase, getPagesUseCase } from '@/use-cases/page'
 import { getTemplateByIdUseCase } from '@/use-cases/template'
 import TemplateEditor from './_components/TemplateEditor'
 import { getProductsUseCase } from '@/use-cases/product'
 import { getProducts } from '@/data-access/product'
+import { env } from 'next-runtime-env'
 
 type Props = {
 	params: {
@@ -34,6 +38,11 @@ export default async function Page({ params: { templateId } }: Props) {
 		{ getPageById },
 		{ pageId: container.pageId! }
 	)
+	const pages = await getPagesUseCase(
+		{ getPages },
+		{ endpointId: parseInt(env('FLYTTEFORDEL_FLYTTEFORDEL_ENDPOINT_ID')!) }
+	)
+	const containers = await getContainersUseCase({ getContainers })
 	const products = await getProductsUseCase({ getProducts })
 
 	return (
@@ -77,6 +86,8 @@ export default async function Page({ params: { templateId } }: Props) {
 			<TemplateEditor
 				pageId={page.pageId}
 				template={template}
+				pages={pages.sort((a, b) => a.sortOrder! - b.sortOrder!)}
+				containers={containers.sort((a, b) => a.sortOrder! - b.sortOrder!)}
 				products={products.map(product => ({
 					name: product.name!,
 					productId: product.productId!,

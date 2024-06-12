@@ -62,6 +62,18 @@ export const duplicateTemplate = async (id: string) => {
 	}
 }
 
+export const moveTemplate = async ({
+	templateId,
+	containerId,
+}: {
+	templateId: string
+	containerId: string
+}) => {
+	const client = await getApiClient()
+
+	await client.put(`/api/template/setparent/${templateId}/${containerId}`)
+}
+
 export const deleteTemplateById = async (id: string) => {
 	const client = await getApiClient()
 
