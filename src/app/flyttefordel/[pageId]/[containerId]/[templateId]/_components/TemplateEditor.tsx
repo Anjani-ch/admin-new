@@ -23,7 +23,6 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { templateTypes } from '@/constants/template'
 import { GetTemplateByKeyVm, TemplateType } from '@/types/api/template'
-import { PlusCircle } from 'lucide-react'
 import {
 	SubmitHandler,
 	useFieldArray,
@@ -45,14 +44,36 @@ import { useCallback } from 'react'
 import Combobox from '@/components/form-control/Combobox'
 import { bytesToMb } from '@/lib/utils'
 import { updateTemplateAction } from '../_actions/updateTemplateAction'
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/components/ui/accordion'
+import MoveTemplateDialog from './MoveTemplateDialog'
+import { GetAllPagesVm } from '@/types/api/page'
+import { GetAllContainersVm } from '@/types/api/container'
+import CopyTemplateButton from './CopyTemplateButton'
+import DeleteTemplateButton from './DeleteTemplateButton'
+import AddTemplateOfferFormDialog from './AddTemplateOfferFormDialog'
+import { GetAllProductsVm } from '@/types/api/product'
+import EditTermsFormDialog from './EditTermsFormDialog'
+import { useParams } from 'next/navigation'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { MoreHorizontal } from 'lucide-react'
+import DeleteTemplateOfferButton from './DeleteTemplateOfferButton'
 
 type Props = {
-	pageId: string
 	template: GetTemplateByKeyVm
-	products: {
-		name: string
-		productId: string
-	}[]
+	products: Pick<GetAllProductsVm, 'name' | 'productId'>[]
+	pages: GetAllPagesVm[]
+	containers: GetAllContainersVm[]
 }
 
 type FormSchema = z.infer<typeof formSchema>
@@ -71,21 +92,31 @@ const formSchema = z.object({
 		.or(z.string()),
 	validToDate: z.date(),
 	terms: z.string(),
-	offers: z.array(
-		z.object({
-			name: z.string().trim().min(1),
-			sortOrder: z.number(),
-			text: z.string().trim().min(1),
-			price: z.number(),
-			product: z.object({
+	offers: z
+		.array(
+			z.object({
 				name: z.string().trim().min(1),
-				productId: z.string(),
-			}),
-		})
-	),
+				sortOrder: z.number(),
+				text: z.string().trim().min(1),
+				price: z.number(),
+				product: z.object({
+					name: z.string().trim().min(1),
+					productId: z.string(),
+				}),
+				templateOfferId: z.string(),
+			})
+		)
+		.min(1),
 })
 
-export default function TemplateEditor({ template, products, pageId }: Props) {
+export default function TemplateEditor({
+	template,
+	products,
+	pages,
+	containers,
+}: Props) {
+	const params = useParams()
+
 	const form = useForm<FormSchema>({
 		mode: 'all',
 		resolver: zodResolver(formSchema),
@@ -100,11 +131,16 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 				url: '',
 			},
 			validToDate: new Date(template.validToDate!),
-			terms: '',
+			terms: template.terms || '',
 		},
 	})
 
 	const templateOffersFieldArray = useFieldArray({
+		control: form.control,
+		name: 'offers',
+	})
+
+	const templateOffersWatch = useWatch({
 		control: form.control,
 		name: 'offers',
 	})
@@ -121,8 +157,8 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 
 	const onSubmit: SubmitHandler<FormSchema> = useCallback(
 		async values => {
-			const [, err] = await updateTemplateAction({
-				pageId,
+			await updateTemplateAction({
+				pageId: params.pageId as string,
 				...template,
 				containerId: template.containerId!,
 				...values,
@@ -130,9 +166,13 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 					? new Date('9999-01-01')
 					: values.validToDate,
 				templateId: template.templateId!,
+				offers: values.offers.map(offer => ({
+					...offer,
+					productId: offer.product.productId,
+				})),
 			})
 		},
-		[pageId, template]
+		[params.pageId, template]
 	)
 
 	return (
@@ -144,13 +184,14 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 				<div className='flex justify-end mb-4'>
 					<Button
 						type='submit'
-						disabled={!form.formState.isValid || form.formState.isSubmitting}
+						disabled={!form.formState.isValid || !form.formState.isDirty}
+						loading={form.formState.isSubmitting}
 					>
 						Lagre
 					</Button>
 				</div>
 
-				<div className='grid grid-cols-4 gap-8'>
+				<div className='grid grid-cols-4 gap-8 mb-8'>
 					<div className='col-span-3'>
 						<Card className='mb-8'>
 							<CardContent className='py-4 flex gap-4 items-center justify-between'>
@@ -217,7 +258,7 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 												name: file.name,
 												url: dataUrl,
 											},
-											{ shouldValidate: true }
+											{ shouldValidate: true, shouldDirty: true }
 										)
 									}}
 								/>
@@ -258,116 +299,6 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 									)}
 								/>
 							</CardContent>
-						</Card>
-
-						<Card>
-							<CardHeader>
-								<CardTitle>Tilbud</CardTitle>
-								<CardDescription>
-									Tilbud knyttet til annonse. Dette er det kunden kan bestille.
-								</CardDescription>
-							</CardHeader>
-
-							<CardContent>
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>Name</TableHead>
-											<TableHead className='max-w-32'>Tekst</TableHead>
-											<TableHead>Produkt</TableHead>
-											<TableHead>Produkt ID</TableHead>
-											<TableHead>Pris</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{templateOffersFieldArray.fields.map((offer, index) => (
-											<TableRow key={offer.id}>
-												<TableCell>
-													<FormField
-														control={form.control}
-														name={`offers.${index}.name`}
-														render={({ field }) => <Input {...field} />}
-													/>
-												</TableCell>
-												<TableCell>
-													<FormField
-														control={form.control}
-														name={`offers.${index}.text`}
-														render={({ field }) => <Textarea {...field} />}
-													/>
-												</TableCell>
-												<TableCell>
-													<Combobox
-														options={products.map(product => ({
-															label: product.name,
-															value: product,
-															id: product.productId,
-														}))}
-														onSelect={option => {
-															if (!option) return
-
-															form.setValue(
-																`offers.${index}.product`,
-																{
-																	name: option.label,
-																	productId: option.id.toString(),
-																},
-																{ shouldValidate: true }
-															)
-														}}
-													/>
-												</TableCell>
-												<TableCell>
-													<Input
-														value={offer.product.productId}
-														readOnly
-														disabled
-													/>
-												</TableCell>
-												<TableCell>
-													<FormField
-														control={form.control}
-														name={`offers.${index}.price`}
-														render={({ field }) => (
-															<Input
-																type='number'
-																{...field}
-																onChange={e => {
-																	field.onChange(parseInt(e.target.value))
-																}}
-															/>
-														)}
-													/>
-												</TableCell>
-											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</CardContent>
-
-							<CardFooter className='border-t px-4 py-2'>
-								<Button
-									size='sm'
-									variant='ghost'
-									className='gap-1'
-									type='button'
-									onClick={() => {
-										templateOffersFieldArray.append({
-											name: '',
-											price: 0,
-											product: {
-												name: '',
-												productId: '',
-											},
-											sortOrder: templateOffersFieldArray.fields.length + 1,
-											text: '',
-										})
-									}}
-								>
-									<PlusCircle className='h-3.5 w-3.5' />
-									Legg til tilbud
-								</Button>
-							</CardFooter>
 						</Card>
 					</div>
 
@@ -411,10 +342,215 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 										</FormItem>
 									)}
 								/>
+
+								<EditTermsFormDialog
+									terms={template.terms}
+									onSubmit={({ terms }) => {
+										form.setValue('terms', terms, {
+											shouldValidate: true,
+											shouldDirty: true,
+										})
+									}}
+								/>
+
+								<Accordion
+									type='multiple'
+									className='w-full'
+								>
+									<AccordionItem value='item-1'>
+										<AccordionTrigger>Meta informasjon</AccordionTrigger>
+										<AccordionContent className='flex flex-col gap-4'>
+											<div>Template ID: {template.templateId}</div>
+											<div>
+												Opprettet:{' '}
+												{new Intl.DateTimeFormat('nb-NO', {
+													dateStyle: 'medium',
+												}).format(new Date(template.createdDate!))}
+											</div>
+											<div>
+												Sist endret:{' '}
+												{new Intl.DateTimeFormat('nb-NO', {
+													dateStyle: 'medium',
+												}).format(new Date(template.changedDate!))}
+											</div>
+										</AccordionContent>
+									</AccordionItem>
+
+									<AccordionItem value='item-2'>
+										<AccordionTrigger>Meta innstillinger</AccordionTrigger>
+										<AccordionContent className='flex flex-col gap-4'>
+											<MoveTemplateDialog
+												pages={pages}
+												containers={containers}
+											/>
+
+											<CopyTemplateButton />
+
+											<DeleteTemplateButton />
+										</AccordionContent>
+									</AccordionItem>
+								</Accordion>
 							</div>
 						</CardContent>
 					</Card>
 				</div>
+
+				<Card>
+					<CardHeader>
+						<CardTitle>Tilbud</CardTitle>
+						<CardDescription>
+							Tilbud knyttet til annonse. Dette er det kunden kan bestille.
+						</CardDescription>
+					</CardHeader>
+
+					<CardContent>
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead>Name</TableHead>
+									<TableHead className='max-w-32'>Tekst</TableHead>
+									<TableHead>Produkt</TableHead>
+									<TableHead>Produkt ID</TableHead>
+									<TableHead>Pris</TableHead>
+									<TableHead>
+										<span className='sr-only'>Handlinger</span>
+									</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{templateOffersFieldArray.fields
+									.sort((a, b) => b.sortOrder! - a.sortOrder!)
+									.map((offer, index) => (
+										<TableRow key={offer.id}>
+											<TableCell>
+												<FormField
+													control={form.control}
+													name={`offers.${index}.name`}
+													render={({ field }) => <Input {...field} />}
+												/>
+											</TableCell>
+											<TableCell>
+												<FormField
+													control={form.control}
+													name={`offers.${index}.text`}
+													render={({ field }) => <Textarea {...field} />}
+												/>
+											</TableCell>
+											<TableCell>
+												<FormField
+													control={form.control}
+													name={`offers.${index}.product`}
+													render={({ field }) => (
+														<Combobox
+															defaultValue={{
+																label: field.value.name,
+																value: field.value.productId,
+																id: field.value.productId,
+															}}
+															options={products.map(product => ({
+																label: product.name!,
+																value: product.productId,
+																id: product.productId!,
+															}))}
+															onSelect={option => {
+																field.onChange({
+																	name: option.label,
+																	productId: option.id.toString(),
+																})
+															}}
+														/>
+													)}
+												/>
+											</TableCell>
+											<TableCell>
+												{/* <FormField
+													control={form.control}
+													name={`offers.${index}.product.productId`}
+													render={({ field }) => (
+														<FormItem>
+															<FormControl>
+																<Input
+																	{...field}
+																	value={
+																		templateOffersWatch.find(
+																			templateOffer =>
+																				templateOffer.templateOfferId ===
+																				offer.templateOfferId
+																		)?.product.productId
+																	}
+																	readOnly
+																	disabled
+																/>
+															</FormControl>
+														</FormItem>
+													)}
+												/> */}
+												{
+													templateOffersWatch.find(
+														templateOffer =>
+															templateOffer.templateOfferId ===
+															offer.templateOfferId
+													)?.product.productId
+												}
+											</TableCell>
+											<TableCell>
+												<FormField
+													control={form.control}
+													name={`offers.${index}.price`}
+													render={({ field }) => (
+														<Input
+															type='number'
+															{...field}
+															onChange={e => {
+																field.onChange(parseInt(e.target.value))
+															}}
+														/>
+													)}
+												/>
+											</TableCell>
+											<TableCell>
+												<DropdownMenu>
+													<DropdownMenuTrigger asChild>
+														<Button
+															aria-haspopup='true'
+															size={'icon'}
+															variant={'ghost'}
+														>
+															<MoreHorizontal className='h-4 w-4' />
+															<span className='sr-only'>Bruke meny</span>
+														</Button>
+													</DropdownMenuTrigger>
+
+													<DropdownMenuContent align='end'>
+														<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
+														<DropdownMenuSeparator />
+														<DeleteTemplateOfferButton
+															templateOfferId={offer.templateOfferId}
+															afterDelete={() => {
+																templateOffersFieldArray.remove(index)
+															}}
+														/>
+													</DropdownMenuContent>
+												</DropdownMenu>
+											</TableCell>
+										</TableRow>
+									))}
+							</TableBody>
+						</Table>
+					</CardContent>
+
+					<CardFooter className='border-t px-4 py-2'>
+						<AddTemplateOfferFormDialog
+							products={products}
+							sortOrder={templateOffersWatch.length + 1}
+							onSubmit={data => {
+								document.getElementById('closeDialog')?.click()
+
+								templateOffersFieldArray.append(data)
+							}}
+						/>
+					</CardFooter>
+				</Card>
 			</form>
 		</Form>
 	)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Check, ChevronsUpDown } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -27,14 +27,21 @@ type Option = {
 
 type Props = {
 	options: Option[]
-	onSelect?: (option: Option | null) => void
+	onSelect?: (option: Option) => void
+	defaultValue?: Option
 }
 
-export default function Combobox({ options, onSelect }: Props) {
+export default function Combobox({ options, onSelect, defaultValue }: Props) {
 	const [open, setOpen] = useState(false)
-	const [value, setValue] = useState<Option | null>(null)
+	const [value, setValue] = useState<Option | null>(defaultValue || null)
 
-	if (!options) options = []
+	const option = value && options.find(option => option.id === value.id)
+
+	useEffect(() => {
+		if (!defaultValue) return
+
+		setValue(defaultValue)
+	}, [])
 
 	return (
 		<Popover
@@ -46,34 +53,33 @@ export default function Combobox({ options, onSelect }: Props) {
 					variant='outline'
 					role='combobox'
 					aria-expanded={open}
-					className='w-[200px] justify-between'
+					className='justify-between w-full'
 				>
-					{value
-						? options.find(option => option.id === value.id)?.label
-						: 'Velg noe...'}
+					{option ? option.label : 'Velg noe...'}
 					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className='w-[200px] p-0'>
-				<Command>
-					<CommandInput placeholder='Search framework...' />
+			<PopoverContent className='p-0 w-full'>
+				<Command className='w-full'>
+					<CommandInput placeholder='Søk resultat...' />
 					<CommandEmpty>Ingen resultater funnet.</CommandEmpty>
 					<CommandGroup>
 						<CommandList>
 							{options.map(option => (
 								<CommandItem
 									key={option.id}
-									value={option.id.toString()}
+									value={option.label}
 									onSelect={currentValue => {
 										const selected =
-											options.find(option => option.id === currentValue) || null
+											options.find(option => option.label === currentValue) ||
+											null
 
-										setValue(
-											!selected || selected?.id.toString() === currentValue
-												? null
-												: selected
-										)
+										if (!selected || value?.id === selected.id) return
+
+										setValue(selected)
+
 										if (onSelect) onSelect(selected)
+
 										setOpen(false)
 									}}
 								>

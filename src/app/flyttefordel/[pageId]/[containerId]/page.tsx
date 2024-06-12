@@ -89,10 +89,7 @@ export default async function Page({ params: { containerId } }: Props) {
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<CreateTemplateFormDialog
-						pageId={page.pageId}
-						containerId={containerId}
-					/>
+					<CreateTemplateFormDialog />
 
 					<Table>
 						<TableHeader>

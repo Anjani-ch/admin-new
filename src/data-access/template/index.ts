@@ -50,6 +50,30 @@ export const updateTemplateLogo = async (dto: CreateTemplateBlobDto) => {
 	await client.post('/api/template/blob', dto)
 }
 
+export const duplicateTemplate = async (id: string) => {
+	const client = await getApiClient()
+
+	const { headers } = await client.post(`/api/template/copy/${id}`)
+
+	return {
+		templateId: (headers.get as (headerName: string) => string)('location')
+			.split('/')
+			.pop()!,
+	}
+}
+
+export const moveTemplate = async ({
+	templateId,
+	containerId,
+}: {
+	templateId: string
+	containerId: string
+}) => {
+	const client = await getApiClient()
+
+	await client.put(`/api/template/setparent/${templateId}/${containerId}`)
+}
+
 export const deleteTemplateById = async (id: string) => {
 	const client = await getApiClient()
 

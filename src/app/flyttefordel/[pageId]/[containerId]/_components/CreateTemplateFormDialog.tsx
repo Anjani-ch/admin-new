@@ -10,16 +10,11 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import CreateTemplateForm from '@/components/form/CreateTemplateForm'
+import { useParams } from 'next/navigation'
 
-type Props = {
-	pageId: string
-	containerId: string
-}
+export default function CreateTemplateFormDialog() {
+	const params = useParams()
 
-export default function CreateTemplateFormDialog({
-	pageId,
-	containerId,
-}: Props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -40,8 +35,8 @@ export default function CreateTemplateFormDialog({
 					afterSubmit={() => {
 						document.getElementById('closeDialog')?.click()
 					}}
-					pageId={pageId}
-					containerId={containerId}
+					pageId={params.pageId as string}
+					containerId={params.containerId as string}
 				/>
 			</DialogContent>
 		</Dialog>

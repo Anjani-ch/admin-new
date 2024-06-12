@@ -30,13 +30,11 @@ export const updateTemplateAction = createServerAction()
 			offers: z.array(
 				z.object({
 					name: z.string().trim().min(1),
+					productId: z.string(),
 					sortOrder: z.number(),
 					text: z.string().trim().min(1),
 					price: z.number(),
-					product: z.object({
-						name: z.string().trim().min(1),
-						productId: z.string(),
-					}),
+					templateOfferId: z.string(),
 				})
 			),
 		})
@@ -61,7 +59,6 @@ export const updateTemplateAction = createServerAction()
 				...input,
 				validToDate: input.validToDate.toISOString().replace(/.\d{3}Z/, 'Z'),
 				limitDays: 0,
-				offers: input.offers as any[],
 			}
 		)
 
