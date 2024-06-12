@@ -45,6 +45,12 @@ import { useCallback } from 'react'
 import Combobox from '@/components/form-control/Combobox'
 import { bytesToMb } from '@/lib/utils'
 import { updateTemplateAction } from '../_actions/updateTemplateAction'
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/components/ui/accordion'
 
 type Props = {
 	pageId: string
@@ -411,6 +417,31 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 										</FormItem>
 									)}
 								/>
+
+								<Accordion
+									type='single'
+									className='w-full'
+									collapsible
+								>
+									<AccordionItem value='item-1'>
+										<AccordionTrigger>Meta informasjon</AccordionTrigger>
+										<AccordionContent className='flex flex-col gap-4'>
+											<div>Template ID: {template.templateId}</div>
+											<div>
+												Opprettet:{' '}
+												{new Intl.DateTimeFormat('nb-NO', {
+													dateStyle: 'medium',
+												}).format(new Date(template.createdDate!))}
+											</div>
+											<div>
+												Sist endret:{' '}
+												{new Intl.DateTimeFormat('nb-NO', {
+													dateStyle: 'medium',
+												}).format(new Date(template.changedDate!))}
+											</div>
+										</AccordionContent>
+									</AccordionItem>
+								</Accordion>
 							</div>
 						</CardContent>
 					</Card>
