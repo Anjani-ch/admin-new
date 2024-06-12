@@ -27,7 +27,7 @@ type Option = {
 
 type Props = {
 	options: Option[]
-	onSelect?: (option: Option | null) => void
+	onSelect?: (option: Option) => void
 }
 
 export default function Combobox({ options, onSelect }: Props) {
@@ -35,6 +35,8 @@ export default function Combobox({ options, onSelect }: Props) {
 	const [value, setValue] = useState<Option | null>(null)
 
 	if (!options) options = []
+
+	const option = value && options.find(option => option.id === value.id)
 
 	return (
 		<Popover
@@ -48,9 +50,7 @@ export default function Combobox({ options, onSelect }: Props) {
 					aria-expanded={open}
 					className='justify-between'
 				>
-					{value
-						? options.find(option => option.id === value.id)?.label
-						: 'Velg noe...'}
+					{option ? option.label : 'Velg noe...'}
 					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 				</Button>
 			</PopoverTrigger>
@@ -66,14 +66,16 @@ export default function Combobox({ options, onSelect }: Props) {
 									value={option.id.toString()}
 									onSelect={currentValue => {
 										const selected =
-											options.find(option => option.id === currentValue) || null
+											options.find(
+												option => option.id.toString() === currentValue
+											) || null
 
-										setValue(
-											!selected || selected?.id.toString() === currentValue
-												? null
-												: selected
-										)
+										if (!selected || value?.id === selected.id) return
+
+										setValue(selected)
+
 										if (onSelect) onSelect(selected)
+
 										setOpen(false)
 									}}
 								>

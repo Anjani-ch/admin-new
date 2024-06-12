@@ -9,28 +9,23 @@ import {
 } from '@/components/ui/dialog'
 import { GetAllContainersVm, GetContainerForPage } from '@/types/api/container'
 import { GetAllPagesVm } from '@/types/api/page'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { moveTemplateAction } from '../_actions/moveTemplateAction'
-import { LoaderCircle } from 'lucide-react'
 
 type Props = {
 	pages: GetAllPagesVm[]
 	containers: GetAllContainersVm[]
-	templateId: string
 }
 
-export default function MoveTemplateDialog({
-	pages,
-	containers,
-	templateId,
-}: Props) {
+export default function MoveTemplateDialog({ pages, containers }: Props) {
 	const [selectedPage, setSelectedPage] = useState<GetAllPagesVm | null>(null)
 	const [selectedContainer, setSelectedContainer] =
 		useState<GetContainerForPage | null>(null)
 	const [isLoading, setIsLoading] = useState(false)
 
 	const router = useRouter()
+	const params = useParams()
 
 	return (
 		<Dialog
@@ -62,16 +57,18 @@ export default function MoveTemplateDialog({
 						id: page.pageId!,
 					}))}
 					onSelect={option => {
-						if (!option) return
 						setSelectedPage(pages.find(page => page.pageId === option.id)!)
+						setSelectedContainer(null)
 					}}
 				/>
 
 				<Combobox
 					options={(selectedPage
-						? containers.filter(
-								container => container.pageId === selectedPage?.pageId
-						  )
+						? containers
+								.filter(
+									container => container.containerId !== params.containerId
+								)
+								.filter(container => container.pageId === selectedPage?.pageId)
 						: []
 					).map(container => ({
 						label: container.name!,
@@ -79,7 +76,6 @@ export default function MoveTemplateDialog({
 						id: container.containerId!,
 					}))}
 					onSelect={option => {
-						if (!option) return
 						setSelectedContainer(
 							containers.find(container => container.containerId === option.id)!
 						)
@@ -94,12 +90,12 @@ export default function MoveTemplateDialog({
 						setIsLoading(true)
 						await moveTemplateAction({
 							containerId: selectedContainer!.containerId!,
-							templateId,
+							templateId: params.templateId as string,
 						})
 
 						router.push(
 							`/flyttefordel/${selectedPage!.pageId!}/${selectedContainer!
-								.containerId!}/${templateId}`
+								.containerId!}/${params.templateId}`
 						)
 					}}
 				>
