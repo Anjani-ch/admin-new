@@ -10,7 +10,7 @@ import {
 import { GetAllContainersVm, GetContainerForPage } from '@/types/api/container'
 import { GetAllPagesVm } from '@/types/api/page'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { moveTemplateAction } from '../_actions/moveTemplateAction'
 
 type Props = {
@@ -31,7 +31,14 @@ export default function MoveTemplateDialog({
 	const router = useRouter()
 
 	return (
-		<Dialog>
+		<Dialog
+			onOpenChange={open => {
+				if (!open) {
+					setSelectedPage(null)
+					setSelectedContainer(null)
+				}
+			}}
+		>
 			<DialogTrigger asChild>
 				<Button
 					type='button'
