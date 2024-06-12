@@ -70,7 +70,7 @@ export default async function Page({ params: { pageId } }: Props) {
 					<CardDescription>Containers for side: {page.name}</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<CreateContainerFormDialog pageId={pageId} />
+					<CreateContainerFormDialog />
 
 					<Table>
 						<TableHeader>

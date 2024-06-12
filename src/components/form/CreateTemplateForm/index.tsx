@@ -200,7 +200,8 @@ export default function CreateTemplateForm({
 
 					<Button
 						type='submit'
-						disabled={!form.formState.isValid || form.formState.isSubmitting}
+						disabled={!form.formState.isValid}
+						loading={form.formState.isSubmitting}
 					>
 						Opprett
 					</Button>

@@ -12,6 +12,7 @@ import { GetAllPagesVm } from '@/types/api/page'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { moveTemplateAction } from '../_actions/moveTemplateAction'
+import { LoaderCircle } from 'lucide-react'
 
 type Props = {
 	pages: GetAllPagesVm[]
@@ -27,6 +28,7 @@ export default function MoveTemplateDialog({
 	const [selectedPage, setSelectedPage] = useState<GetAllPagesVm | null>(null)
 	const [selectedContainer, setSelectedContainer] =
 		useState<GetContainerForPage | null>(null)
+	const [isLoading, setIsLoading] = useState(false)
 
 	const router = useRouter()
 
@@ -86,8 +88,10 @@ export default function MoveTemplateDialog({
 
 				<Button
 					disabled={!selectedPage || !selectedContainer}
+					loading={isLoading}
 					type='button'
 					onClick={async () => {
+						setIsLoading(true)
 						await moveTemplateAction({
 							containerId: selectedContainer!.containerId!,
 							templateId,

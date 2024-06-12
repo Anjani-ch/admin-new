@@ -51,14 +51,11 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '@/components/ui/accordion'
-import { deleteTemplateAction } from '../_actions/deleteTemplateAction'
-import { duplicateTemplateAction } from '../_actions/duplicateTemplateAction'
-import { useRouter } from 'next/navigation'
-import { useToast } from '@/components/ui/use-toast'
-import { ToastAction } from '@/components/ui/toast'
 import MoveTemplateDialog from './MoveTemplateDialog'
 import { GetAllPagesVm } from '@/types/api/page'
 import { GetAllContainersVm } from '@/types/api/container'
+import CopyTemplateButton from './CopyTemplateButton'
+import DeleteTemplateButton from './DeleteTemplateButton'
 
 type Props = {
 	pageId: string
@@ -108,9 +105,6 @@ export default function TemplateEditor({
 	pages,
 	containers,
 }: Props) {
-	const router = useRouter()
-	const { toast } = useToast()
-
 	const form = useForm<FormSchema>({
 		mode: 'all',
 		resolver: zodResolver(formSchema),
@@ -169,7 +163,8 @@ export default function TemplateEditor({
 				<div className='flex justify-end mb-4'>
 					<Button
 						type='submit'
-						disabled={!form.formState.isValid || form.formState.isSubmitting}
+						disabled={!form.formState.isValid || !form.formState.isDirty}
+						loading={form.formState.isSubmitting}
 					>
 						Lagre
 					</Button>
@@ -469,50 +464,9 @@ export default function TemplateEditor({
 												templateId={template.templateId!}
 											/>
 
-											<Button
-												type='button'
-												className='w-full'
-												variant='outline'
-												onClick={async () => {
-													const [res, err] = await duplicateTemplateAction({
-														templateId: template.templateId!,
-														containerId: template.containerId!,
-														pageId,
-													})
+											<CopyTemplateButton />
 
-													if (!res) return
-
-													toast({
-														title: 'Vellyket',
-														description: 'Template duplisert',
-														action: (
-															<ToastAction
-																onClick={() => router.push(res.templateUrl)}
-																altText='Åpne'
-															>
-																Åpne
-															</ToastAction>
-														),
-													})
-												}}
-											>
-												Lag kopi
-											</Button>
-
-											<Button
-												type='button'
-												className='w-full'
-												variant='destructive'
-												onClick={async () => {
-													await deleteTemplateAction({
-														templateId: template.templateId!,
-														containerId: template.containerId!,
-														pageId,
-													})
-												}}
-											>
-												Slett
-											</Button>
+											<DeleteTemplateButton />
 										</AccordionContent>
 									</AccordionItem>
 								</Accordion>

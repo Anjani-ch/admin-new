@@ -10,7 +10,6 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import CreatePageForm from '@/components/form/CreatePageForm'
-import { env } from 'next-runtime-env'
 
 type Props = {
 	endpointId: number

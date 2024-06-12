@@ -30,6 +30,4 @@ export const deleteTemplateAction = createServerAction()
 		}
 
 		revalidatePath(`/flyttefordel/${pageId}/${containerId}`)
-
-		redirect(`/flyttefordel/${pageId}/${containerId}`)
 	})

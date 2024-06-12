@@ -20,12 +20,13 @@ export default function DeleteTemplateButton({
 	pageId,
 	templateName,
 }: Props) {
-	const [loading, setIsLoading] = useState(false)
+	const [isLoading, setIsLoading] = useState(false)
 	const { toast } = useToast()
 
 	return (
 		<DropdownMenuItem
-			disabled={disabled || loading}
+			disabled={disabled}
+			loading={isLoading}
 			onClick={async () => {
 				setIsLoading(true)
 				const [, err] = await deleteTemplateAction({

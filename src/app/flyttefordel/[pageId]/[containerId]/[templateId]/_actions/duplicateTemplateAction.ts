@@ -8,23 +8,21 @@ import { createServerAction } from 'zsa'
 export const duplicateTemplateAction = createServerAction()
 	.input(
 		z.object({
-			pageId: z.string(),
-			containerId: z.string(),
 			templateId: z.string(),
 		})
 	)
 	.output(
 		z.object({
-			templateUrl: z.string(),
+			newTemplateId: z.string(),
 		})
 	)
-	.handler(async ({ input: { pageId, containerId, templateId } }) => {
+	.handler(async ({ input: { templateId } }) => {
 		const { templateId: newTemplateId } = await duplicateTemplateUseCase(
 			{ duplicateTemplate },
 			{ templateId }
 		)
 
 		return {
-			templateUrl: `/flyttefordel/${pageId}/${containerId}/${newTemplateId}`,
+			newTemplateId,
 		}
 	})
