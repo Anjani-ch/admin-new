@@ -11,6 +11,7 @@ import {
 	GetTemplateById,
 	UpdateTemplate,
 	UpdateTemplateLogo,
+	DuplicateTemplate,
 } from './types'
 
 export const getTemplatesUseCase = async (context: {
@@ -80,4 +81,13 @@ export const deleteTemplateUseCase = async (
 	await context.deleteTemplateById(data.templateId)
 
 	return { errors }
+}
+
+export const duplicateTemplateUseCase = async (
+	context: {
+		duplicateTemplate: DuplicateTemplate
+	},
+	data: { templateId: string }
+) => {
+	return await context.duplicateTemplate(data.templateId)
 }

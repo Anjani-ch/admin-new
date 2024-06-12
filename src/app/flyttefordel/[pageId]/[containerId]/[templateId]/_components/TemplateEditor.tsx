@@ -51,6 +51,11 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '@/components/ui/accordion'
+import { deleteTemplateAction } from '../_actions/deleteTemplateAction'
+import { duplicateTemplateAction } from '../_actions/duplicateTemplateAction'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/components/ui/use-toast'
+import { ToastAction } from '@/components/ui/toast'
 
 type Props = {
 	pageId: string
@@ -92,6 +97,9 @@ const formSchema = z.object({
 })
 
 export default function TemplateEditor({ template, products, pageId }: Props) {
+	const router = useRouter()
+	const { toast } = useToast()
+
 	const form = useForm<FormSchema>({
 		mode: 'all',
 		resolver: zodResolver(formSchema),
@@ -419,9 +427,8 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 								/>
 
 								<Accordion
-									type='single'
+									type='multiple'
 									className='w-full'
-									collapsible
 								>
 									<AccordionItem value='item-1'>
 										<AccordionTrigger>Meta informasjon</AccordionTrigger>
@@ -439,6 +446,56 @@ export default function TemplateEditor({ template, products, pageId }: Props) {
 													dateStyle: 'medium',
 												}).format(new Date(template.changedDate!))}
 											</div>
+										</AccordionContent>
+									</AccordionItem>
+
+									<AccordionItem value='item-2'>
+										<AccordionTrigger>Meta innstillinger</AccordionTrigger>
+										<AccordionContent className='flex flex-col gap-4'>
+											<Button
+												type='button'
+												className='w-full'
+												variant='outline'
+												onClick={async () => {
+													const [res, err] = await duplicateTemplateAction({
+														templateId: template.templateId!,
+														containerId: template.containerId!,
+														pageId,
+													})
+
+													if (!res) return
+
+													toast({
+														title: 'Vellyket',
+														description: 'Template duplisert',
+														action: (
+															<ToastAction
+																onClick={() => router.push(res.templateUrl)}
+																altText='Åpne'
+															>
+																Åpne
+															</ToastAction>
+														),
+													})
+												}}
+											>
+												Lag kopi
+											</Button>
+
+											<Button
+												type='button'
+												className='w-full'
+												variant='destructive'
+												onClick={async () => {
+													await deleteTemplateAction({
+														templateId: template.templateId!,
+														containerId: template.containerId!,
+														pageId,
+													})
+												}}
+											>
+												Slett
+											</Button>
 										</AccordionContent>
 									</AccordionItem>
 								</Accordion>
