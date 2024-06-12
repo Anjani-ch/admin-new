@@ -138,6 +138,11 @@ export default function TemplateEditor({
 		name: 'offers',
 	})
 
+	const templateOffersWatch = useWatch({
+		control: form.control,
+		name: 'offers',
+	})
+
 	const noExpiryWatch = useWatch({
 		control: form.control,
 		name: 'noExpiry',
@@ -428,31 +433,53 @@ export default function TemplateEditor({
 											/>
 										</TableCell>
 										<TableCell>
-											<Combobox
-												options={products.map(product => ({
-													label: product.name!,
-													value: product.productId,
-													id: product.productId!,
-												}))}
-												onSelect={option => {
-													if (!option) return
-
-													form.setValue(
-														`offers.${index}.product`,
-														{
-															name: option.label,
-															productId: option.id.toString(),
-														},
-														{ shouldValidate: true, shouldDirty: true }
-													)
-												}}
+											<FormField
+												control={form.control}
+												name={`offers.${index}.product`}
+												render={({ field }) => (
+													<Combobox
+														defaultValue={{
+															label: field.value.name,
+															value: field.value.productId,
+															id: field.value.productId,
+														}}
+														options={products.map(product => ({
+															label: product.name!,
+															value: product.productId,
+															id: product.productId!,
+														}))}
+														onSelect={option => {
+															field.onChange({
+																name: option.label,
+																productId: option.id.toString(),
+															})
+														}}
+													/>
+												)}
 											/>
 										</TableCell>
 										<TableCell>
-											<Input
-												value={offer.product.productId}
-												readOnly
-												disabled
+											<FormField
+												control={form.control}
+												name={`offers.${index}.product.productId`}
+												render={({ field }) => (
+													<FormItem>
+														<FormControl>
+															<Input
+																{...field}
+																value={
+																	templateOffersWatch.find(
+																		templateOffer =>
+																			templateOffer.templateOfferId ===
+																			offer.templateOfferId
+																	)!.product.productId
+																}
+																readOnly
+																disabled
+															/>
+														</FormControl>
+													</FormItem>
+												)}
 											/>
 										</TableCell>
 										<TableCell>

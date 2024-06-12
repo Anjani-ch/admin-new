@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Check, ChevronsUpDown } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -28,15 +28,20 @@ type Option = {
 type Props = {
 	options: Option[]
 	onSelect?: (option: Option) => void
+	defaultValue?: Option
 }
 
-export default function Combobox({ options, onSelect }: Props) {
+export default function Combobox({ options, onSelect, defaultValue }: Props) {
 	const [open, setOpen] = useState(false)
-	const [value, setValue] = useState<Option | null>(null)
-
-	if (!options) options = []
+	const [value, setValue] = useState<Option | null>(defaultValue || null)
 
 	const option = value && options.find(option => option.id === value.id)
+
+	useEffect(() => {
+		if (!defaultValue) return
+
+		setValue(defaultValue)
+	}, [])
 
 	return (
 		<Popover
@@ -63,12 +68,11 @@ export default function Combobox({ options, onSelect }: Props) {
 							{options.map(option => (
 								<CommandItem
 									key={option.id}
-									value={option.id.toString()}
+									value={option.label}
 									onSelect={currentValue => {
 										const selected =
-											options.find(
-												option => option.id.toString() === currentValue
-											) || null
+											options.find(option => option.label === currentValue) ||
+											null
 
 										if (!selected || value?.id === selected.id) return
 
