@@ -20,8 +20,7 @@ import {
 } from '@/components/ui/popover'
 
 type Option = {
-	id: number | string
-	value: any
+	value: string
 	label: string
 }
 
@@ -35,7 +34,7 @@ export default function Combobox({ options, onSelect, defaultValue }: Props) {
 	const [open, setOpen] = useState(false)
 	const [value, setValue] = useState<Option | null>(defaultValue || null)
 
-	const option = value && options.find(option => option.id === value.id)
+	const option = value && options.find(option => option.value === value.value)
 
 	useEffect(() => {
 		if (!defaultValue) return
@@ -67,14 +66,14 @@ export default function Combobox({ options, onSelect, defaultValue }: Props) {
 						<CommandList>
 							{options.map(option => (
 								<CommandItem
-									key={option.id}
-									value={option.label}
+									key={option.value}
+									value={option.value}
 									onSelect={currentValue => {
 										const selected =
-											options.find(option => option.label === currentValue) ||
+											options.find(option => option.value === currentValue) ||
 											null
 
-										if (!selected || value?.id === selected.id) return
+										if (!selected || value?.value === selected.value) return
 
 										setValue(selected)
 
@@ -86,7 +85,9 @@ export default function Combobox({ options, onSelect, defaultValue }: Props) {
 									<Check
 										className={cn(
 											'mr-2 h-4 w-4',
-											value?.id === option.id ? 'opacity-100' : 'opacity-0'
+											value?.value === option.value
+												? 'opacity-100'
+												: 'opacity-0'
 										)}
 									/>
 									{option.label}

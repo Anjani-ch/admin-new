@@ -79,61 +79,59 @@ export default async function page() {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{pages
-								.sort((a, b) => a.sortOrder! - b.sortOrder!)
-								.map(page => {
-									// There is a business rule in backend API that you cannot delete page without deleting
-									// all connected containers first
-									const canDelete =
-										containers.filter(
-											container => container.pageId === page.pageId
-										).length === 0
+							{pages.map(page => {
+								// There is a business rule in backend API that you cannot delete page without deleting
+								// all connected containers first
+								const canDelete =
+									containers.filter(
+										container => container.pageId === page.pageId
+									).length === 0
 
-									return (
-										<TableRow
-											key={page.pageId}
-											className='bg-accent'
-										>
-											<TableCell className='font-medium'>
-												<Link href={`/flyttefordel/${page.pageId}`}>
-													{page.name}
-												</Link>
-											</TableCell>
-											<TableCell>
-												<Badge
-													className='text-xs'
-													variant={page.active ? 'default' : 'secondary'}
-												>
-													{page.active ? 'Aktiv' : 'Inaktiv'}
-												</Badge>
-											</TableCell>
-											<TableCell>
-												<DropdownMenu>
-													<DropdownMenuTrigger asChild>
-														<Button
-															aria-haspopup='true'
-															size={'icon'}
-															variant={'ghost'}
-														>
-															<MoreHorizontal className='h-4 w-4' />
-															<span className='sr-only'>Bruke meny</span>
-														</Button>
-													</DropdownMenuTrigger>
+								return (
+									<TableRow
+										key={page.pageId}
+										className='bg-accent'
+									>
+										<TableCell className='font-medium'>
+											<Link href={`/flyttefordel/${page.pageId}`}>
+												{page.name}
+											</Link>
+										</TableCell>
+										<TableCell>
+											<Badge
+												className='text-xs'
+												variant={page.active ? 'default' : 'secondary'}
+											>
+												{page.active ? 'Aktiv' : 'Inaktiv'}
+											</Badge>
+										</TableCell>
+										<TableCell>
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button
+														aria-haspopup='true'
+														size={'icon'}
+														variant={'ghost'}
+													>
+														<MoreHorizontal className='h-4 w-4' />
+														<span className='sr-only'>Bruke meny</span>
+													</Button>
+												</DropdownMenuTrigger>
 
-													<DropdownMenuContent align='end'>
-														<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
-														<DropdownMenuSeparator />
-														<DeletePageButton
-															pageName={page.name!}
-															pageId={page.pageId!}
-															disabled={!canDelete}
-														/>
-													</DropdownMenuContent>
-												</DropdownMenu>
-											</TableCell>
-										</TableRow>
-									)
-								})}
+												<DropdownMenuContent align='end'>
+													<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
+													<DropdownMenuSeparator />
+													<DeletePageButton
+														pageName={page.name!}
+														pageId={page.pageId!}
+														disabled={!canDelete}
+													/>
+												</DropdownMenuContent>
+											</DropdownMenu>
+										</TableCell>
+									</TableRow>
+								)
+							})}
 						</TableBody>
 					</Table>
 				</CardContent>

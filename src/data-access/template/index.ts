@@ -6,14 +6,16 @@ import {
 	GetTemplateByKeyVm,
 	UpdateTemplateDto,
 } from '@/types/api/template'
-import { isAxiosError } from 'axios'
 
 export const getTemplates = async () => {
 	const client = await getApiClient()
 
 	const { data } = await client.get<GetAllTemplateVm[]>('/api/template/all')
 
-	return data
+	return data.sort(
+		(a, b) =>
+			new Date(b.changedDate!).getTime() - new Date(a.changedDate!).getTime()
+	)
 }
 
 export const getTemplateById = async (id: string) => {
@@ -21,7 +23,10 @@ export const getTemplateById = async (id: string) => {
 
 	const { data } = await client.get<GetTemplateByKeyVm>(`/api/template/${id}`)
 
-	return data
+	return {
+		...data,
+		offers: (data.offers || []).sort((a, b) => a.sortOrder! - b.sortOrder!),
+	}
 }
 
 export const createTemplate = async (dto: CreateTemplateDto) => {

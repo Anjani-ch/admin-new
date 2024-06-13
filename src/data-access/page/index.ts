@@ -6,7 +6,7 @@ export const getPages = async () => {
 
 	const { data } = await client.get<GetAllPagesVm[]>('/api/page/all')
 
-	return data
+	return data.sort((a, b) => a.sortOrder! - b.sortOrder!)
 }
 
 export const getPageById = async (pageId: string) => {
@@ -14,7 +14,10 @@ export const getPageById = async (pageId: string) => {
 
 	const { data } = await client.get<GetPageByKeyVm>(`/api/page/${pageId}`)
 
-	return data
+	return {
+		...data,
+		containers: data.containers?.sort((a, b) => a.sortOrder! - b.sortOrder!),
+	}
 }
 
 export const createPage = async (dto: CreatePageDto) => {

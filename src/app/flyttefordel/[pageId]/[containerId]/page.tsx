@@ -105,8 +105,7 @@ export default async function Page({ params: { containerId } }: Props) {
 						</TableHeader>
 						<TableBody>
 							{container.templates
-								?.sort((a, b) => a.sortOrder! - b.sortOrder!)
-								.map(template => {
+								?.map(template => {
 									const validToDate = new Date(template.validToDate!)
 
 									// There is a business rule in backend API that you cannot delete template without deleting

@@ -10,7 +10,7 @@ export const getContainers = async () => {
 
 	const { data } = await client.get<GetAllContainersVm[]>('/api/container/all')
 
-	return data
+	return data.sort((a, b) => a.sortOrder! - b.sortOrder!)
 }
 
 export const getContainerById = async (containerId: string) => {
@@ -20,7 +20,10 @@ export const getContainerById = async (containerId: string) => {
 		`/api/container/${containerId}`
 	)
 
-	return data
+	return {
+		...data,
+		templates: data.templates?.sort((a, b) => a.sortOrder! - b.sortOrder!),
+	}
 }
 
 export const createContainer = async (dto: CreateContainerDto) => {

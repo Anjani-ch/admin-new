@@ -85,8 +85,8 @@ export default async function Page({ params: { templateId } }: Props) {
 
 			<TemplateEditor
 				template={template}
-				pages={pages.sort((a, b) => a.sortOrder! - b.sortOrder!)}
-				containers={containers.sort((a, b) => a.sortOrder! - b.sortOrder!)}
+				pages={pages}
+				containers={containers}
 				products={products.map(product => ({
 					name: product.name!,
 					productId: product.productId!,
