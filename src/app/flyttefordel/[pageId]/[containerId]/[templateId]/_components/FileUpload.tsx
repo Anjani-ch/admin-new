@@ -18,8 +18,9 @@ export default function FileUpload({
 		<div>
 			{imageUrl && (
 				<img
-					className='max-w-[37.5rem] mb-5'
+					className='max-w-full mb-5'
 					src={imageUrl}
+					alt='template-logo'
 				/>
 			)}
 
