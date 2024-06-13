@@ -211,8 +211,8 @@ export default function TemplateEditor({
 					</Button>
 				</div>
 
-				<div className='grid grid-cols-4 gap-8 mb-8'>
-					<div className='col-span-3'>
+				<div className='grid grid-cols-1 md:grid-cols-4 md:gap-8 mb-8'>
+					<div className='col-span-3 order-2 md:order-1'>
 						<Card className='mb-8'>
 							<CardContent className='py-4 flex gap-4 items-center justify-between'>
 								<Badge>{templateTypes[TemplateType.Offer]}</Badge>
@@ -343,7 +343,7 @@ export default function TemplateEditor({
 						</Card>
 					</div>
 
-					<Card>
+					<Card className='order-1 md:order-2'>
 						<CardContent>
 							<div className='mt-4'>
 								{!noExpiryWatch && (

@@ -27,7 +27,7 @@ export default async function RecentlyChangedTemplates() {
 
 	return (
 		<Card>
-			<CardHeader className='px-7'>
+			<CardHeader>
 				<CardTitle>Annonser</CardTitle>
 				<CardDescription>Sist endret annonser</CardDescription>
 			</CardHeader>
