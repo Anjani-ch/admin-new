@@ -132,9 +132,6 @@ export default function TemplateEditor({
 			},
 			validToDate: new Date(template.validToDate!),
 			terms: template.terms || '',
-			offers: (template.offers || []).sort(
-				(a, b) => a.sortOrder! - b.sortOrder!
-			),
 		},
 	})
 

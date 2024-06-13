@@ -21,13 +21,7 @@ import { take } from 'lodash'
 export default async function RecentlyChangedTemplates() {
 	let templates = await getTemplatesUseCase({ getTemplates })
 
-	templates = take(
-		templates.sort(
-			(a, b) =>
-				new Date(b.changedDate!).getTime() - new Date(a.changedDate!).getTime()
-		),
-		5
-	)
+	templates = take(templates, 5)
 
 	return (
 		<Card>

@@ -83,60 +83,58 @@ export default async function Page({ params: { pageId } }: Props) {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{page.containers
-								?.sort((a, b) => a.sortOrder! - b.sortOrder!)
-								.map(container => {
-									// There is a business rule in backend API that you cannot delete container without deleting
-									// all connected templates first
-									const canDelete = (container.templates || []).length === 0
+							{page.containers?.map(container => {
+								// There is a business rule in backend API that you cannot delete container without deleting
+								// all connected templates first
+								const canDelete = (container.templates || []).length === 0
 
-									return (
-										<TableRow
-											key={container.containerId}
-											className='bg-accent'
-										>
-											<TableCell className='font-medium'>
-												<Link
-													href={`/flyttefordel/${pageId}/${container.containerId}`}
-												>
-													{container.name}
-												</Link>
-											</TableCell>
-											<TableCell>
-												<Badge
-													className='text-xs'
-													variant={container.active ? 'default' : 'secondary'}
-												>
-													{container.active ? 'Aktiv' : 'Inaktiv'}
-												</Badge>
-											</TableCell>
-											<TableCell>
-												<DropdownMenu>
-													<DropdownMenuTrigger asChild>
-														<Button
-															aria-haspopup='true'
-															size={'icon'}
-															variant={'ghost'}
-														>
-															<MoreHorizontal className='h-4 w-4' />
-															<span className='sr-only'>Bruke meny</span>
-														</Button>
-													</DropdownMenuTrigger>
-													<DropdownMenuContent align='end'>
-														<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
-														<DropdownMenuSeparator />
-														<DeleteContainerButton
-															pageId={pageId}
-															containerName={container.name!}
-															containerId={container.containerId!}
-															disabled={!canDelete}
-														/>
-													</DropdownMenuContent>
-												</DropdownMenu>
-											</TableCell>
-										</TableRow>
-									)
-								})}
+								return (
+									<TableRow
+										key={container.containerId}
+										className='bg-accent'
+									>
+										<TableCell className='font-medium'>
+											<Link
+												href={`/flyttefordel/${pageId}/${container.containerId}`}
+											>
+												{container.name}
+											</Link>
+										</TableCell>
+										<TableCell>
+											<Badge
+												className='text-xs'
+												variant={container.active ? 'default' : 'secondary'}
+											>
+												{container.active ? 'Aktiv' : 'Inaktiv'}
+											</Badge>
+										</TableCell>
+										<TableCell>
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button
+														aria-haspopup='true'
+														size={'icon'}
+														variant={'ghost'}
+													>
+														<MoreHorizontal className='h-4 w-4' />
+														<span className='sr-only'>Bruke meny</span>
+													</Button>
+												</DropdownMenuTrigger>
+												<DropdownMenuContent align='end'>
+													<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
+													<DropdownMenuSeparator />
+													<DeleteContainerButton
+														pageId={pageId}
+														containerName={container.name!}
+														containerId={container.containerId!}
+														disabled={!canDelete}
+													/>
+												</DropdownMenuContent>
+											</DropdownMenu>
+										</TableCell>
+									</TableRow>
+								)
+							})}
 						</TableBody>
 					</Table>
 				</CardContent>
