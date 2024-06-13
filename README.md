@@ -32,6 +32,42 @@ Push changes to main and the CI/CD pipeline will do the rest.
 
 Do not write your own CSS files. If you must then use global CSS, but try not to write global CSS either. Use Tailwind to it's full potential.
 
+## Project structure
+
+The root for the actual application files is located in src folder.
+
+### UI
+
+#### components/ui
+
+This directory contains components generated from shadecn/ui. These are automatically generated and do not need to be changed for things to work, but if you need to extend functionality of the components to fit needs for new requirements then feel free to do so.
+
+#### components/form-control
+
+This directory contains larger form component created for reusability. For example setting up a date picker multiple places without a component can feel redundant because it is made from the combination of multiple components compared to simple form components such as a text input.
+
+#### components/form
+
+This directory contains ready made form for a specific use-case. For example a form for creating a page or container.
+
+#### components
+
+Feel free to add other folder or component directly in the root if required.
+
+### Data
+
+#### data-access
+
+This directory contains methods for different type of data access. Usually these are the methods for fetching i particular type of data, and is the base for the use-cases of the application. All connections to data used (API or DB) should be defined and imported from here.
+
+#### use-cases
+
+This directory contains alle the use-cases for the application. This basically means that every functionality the application has is defined as a use-case. A use-case takes in a context and some data. The context is an object with all dependencies for the use-case, this is typically just the definitions for the dependencies and not the actual implementation. And data is data used in your use-case including data needed for dependencies. Use-cases should not import needed dependencies directly but rather be passed in when invoking a use-case.
+
+#### types
+
+This directory contains all common types used in the application. Typical typing for data and dtos (data transfer objects) will be defined and imported from here.
+
 ## Standard Next js README
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
