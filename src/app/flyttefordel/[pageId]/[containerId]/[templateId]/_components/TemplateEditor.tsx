@@ -524,6 +524,10 @@ export default function TemplateEditor({
 							onSubmit={data => {
 								templateOffersFieldArray.append(data)
 
+								form.resetField('offers', {
+									defaultValue: [...templateOffersWatch, data],
+								})
+
 								document.getElementById('closeDialog')?.click()
 							}}
 						/>
