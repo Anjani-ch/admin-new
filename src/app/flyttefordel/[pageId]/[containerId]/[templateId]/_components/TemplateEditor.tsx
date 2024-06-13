@@ -171,8 +171,12 @@ export default function TemplateEditor({
 					productId: offer.product.productId,
 				})),
 			})
+
+			// When saving changes we want to reset form to hva a "new" default state for isDirty value
+			// to work properly after saving changes
+			form.reset(values)
 		},
-		[params.pageId, template]
+		[form, params.pageId, template]
 	)
 
 	return (
@@ -518,9 +522,9 @@ export default function TemplateEditor({
 							products={products}
 							sortOrder={templateOffersWatch.length + 1}
 							onSubmit={data => {
-								document.getElementById('closeDialog')?.click()
-
 								templateOffersFieldArray.append(data)
+
+								document.getElementById('closeDialog')?.click()
 							}}
 						/>
 					</CardFooter>
