@@ -26,8 +26,6 @@ Run the project in development mode:
 npm run dev
 ```
 
-Push changes to main and the CI/CD pipeline will do the rest.
-
 ## Writing CSS
 
 Do not write your own CSS files. If you must then use global CSS, but try not to write global CSS either. Use Tailwind to it's full potential.
