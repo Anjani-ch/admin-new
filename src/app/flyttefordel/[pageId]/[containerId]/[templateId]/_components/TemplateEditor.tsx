@@ -132,6 +132,9 @@ export default function TemplateEditor({
 			},
 			validToDate: new Date(template.validToDate!),
 			terms: template.terms || '',
+			offers: (template.offers || []).sort(
+				(a, b) => a.sortOrder! - b.sortOrder!
+			),
 		},
 	})
 
@@ -418,123 +421,97 @@ export default function TemplateEditor({
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{templateOffersFieldArray.fields
-									.sort((a, b) => b.sortOrder! - a.sortOrder!)
-									.map((offer, index) => (
-										<TableRow key={offer.id}>
-											<TableCell>
-												<FormField
-													control={form.control}
-													name={`offers.${index}.name`}
-													render={({ field }) => <Input {...field} />}
-												/>
-											</TableCell>
-											<TableCell>
-												<FormField
-													control={form.control}
-													name={`offers.${index}.text`}
-													render={({ field }) => <Textarea {...field} />}
-												/>
-											</TableCell>
-											<TableCell>
-												<FormField
-													control={form.control}
-													name={`offers.${index}.product`}
-													render={({ field }) => (
-														<Combobox
-															defaultValue={{
-																label: field.value.name,
-																value: field.value.productId,
-																id: field.value.productId,
-															}}
-															options={products.map(product => ({
-																label: product.name!,
-																value: product.productId,
-																id: product.productId!,
-															}))}
-															onSelect={option => {
-																field.onChange({
-																	name: option.label,
-																	productId: option.id.toString(),
-																})
-															}}
-														/>
-													)}
-												/>
-											</TableCell>
-											<TableCell>
-												{/* <FormField
-													control={form.control}
-													name={`offers.${index}.product.productId`}
-													render={({ field }) => (
-														<FormItem>
-															<FormControl>
-																<Input
-																	{...field}
-																	value={
-																		templateOffersWatch.find(
-																			templateOffer =>
-																				templateOffer.templateOfferId ===
-																				offer.templateOfferId
-																		)?.product.productId
-																	}
-																	readOnly
-																	disabled
-																/>
-															</FormControl>
-														</FormItem>
-													)}
-												/> */}
-												{
-													templateOffersWatch.find(
-														templateOffer =>
-															templateOffer.templateOfferId ===
-															offer.templateOfferId
-													)?.product.productId
-												}
-											</TableCell>
-											<TableCell>
-												<FormField
-													control={form.control}
-													name={`offers.${index}.price`}
-													render={({ field }) => (
-														<Input
-															type='number'
-															{...field}
-															onChange={e => {
-																field.onChange(parseInt(e.target.value))
-															}}
-														/>
-													)}
-												/>
-											</TableCell>
-											<TableCell>
-												<DropdownMenu>
-													<DropdownMenuTrigger asChild>
-														<Button
-															aria-haspopup='true'
-															size={'icon'}
-															variant={'ghost'}
-														>
-															<MoreHorizontal className='h-4 w-4' />
-															<span className='sr-only'>Bruke meny</span>
-														</Button>
-													</DropdownMenuTrigger>
+								{templateOffersFieldArray.fields.map((offer, index) => (
+									<TableRow key={offer.id}>
+										<TableCell>
+											<FormField
+												control={form.control}
+												name={`offers.${index}.name`}
+												render={({ field }) => <Input {...field} />}
+											/>
+										</TableCell>
+										<TableCell>
+											<FormField
+												control={form.control}
+												name={`offers.${index}.text`}
+												render={({ field }) => <Textarea {...field} />}
+											/>
+										</TableCell>
+										<TableCell>
+											<FormField
+												control={form.control}
+												name={`offers.${index}.product`}
+												render={({ field }) => (
+													<Combobox
+														defaultValue={{
+															label: field.value.name,
+															value: field.value.productId,
+														}}
+														options={products.map(product => ({
+															label: product.name!,
+															value: product.productId!,
+														}))}
+														onSelect={option => {
+															field.onChange({
+																name: option.label,
+																productId: option.value,
+															})
+														}}
+													/>
+												)}
+											/>
+										</TableCell>
+										<TableCell>
+											{
+												templateOffersWatch.find(
+													templateOffer =>
+														templateOffer.templateOfferId ===
+														offer.templateOfferId
+												)?.product.productId
+											}
+										</TableCell>
+										<TableCell>
+											<FormField
+												control={form.control}
+												name={`offers.${index}.price`}
+												render={({ field }) => (
+													<Input
+														type='number'
+														{...field}
+														onChange={e => {
+															field.onChange(parseInt(e.target.value))
+														}}
+													/>
+												)}
+											/>
+										</TableCell>
+										<TableCell>
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button
+														aria-haspopup='true'
+														size={'icon'}
+														variant={'ghost'}
+													>
+														<MoreHorizontal className='h-4 w-4' />
+														<span className='sr-only'>Bruke meny</span>
+													</Button>
+												</DropdownMenuTrigger>
 
-													<DropdownMenuContent align='end'>
-														<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
-														<DropdownMenuSeparator />
-														<DeleteTemplateOfferButton
-															templateOfferId={offer.templateOfferId}
-															afterDelete={() => {
-																templateOffersFieldArray.remove(index)
-															}}
-														/>
-													</DropdownMenuContent>
-												</DropdownMenu>
-											</TableCell>
-										</TableRow>
-									))}
+												<DropdownMenuContent align='end'>
+													<DropdownMenuLabel>Handlinger</DropdownMenuLabel>
+													<DropdownMenuSeparator />
+													<DeleteTemplateOfferButton
+														templateOfferId={offer.templateOfferId}
+														afterDelete={() => {
+															templateOffersFieldArray.remove(index)
+														}}
+													/>
+												</DropdownMenuContent>
+											</DropdownMenu>
+										</TableCell>
+									</TableRow>
+								))}
 							</TableBody>
 						</Table>
 					</CardContent>
