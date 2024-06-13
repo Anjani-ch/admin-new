@@ -84,7 +84,11 @@ const formSchema = z.object({
 	name: z.string().trim().min(1, 'Navn kan ikke være tomt'),
 	active: z.boolean(),
 	header: z.string().trim().min(1, 'Overskrift kan ikke være tomt'),
-	text: z.string().trim().min(1).max(256, 'Tekst kan maks være 256 tegn'),
+	text: z
+		.string()
+		.trim()
+		.min(1, 'Tekst kan ikke være tomt')
+		.max(256, 'Tekst kan maks være 256 tegn'),
 	logo: z
 		.object({
 			name: z.string().min(1),
