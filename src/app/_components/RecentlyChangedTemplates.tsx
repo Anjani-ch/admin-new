@@ -17,15 +17,17 @@ import {
 	TableRow,
 } from '@/components/ui/table'
 import { take } from 'lodash'
+import Link from 'next/link'
+import { getContainersUseCase } from '@/use-cases/container'
+import { getContainers } from '@/data-access/container'
 
 export default async function RecentlyChangedTemplates() {
-	let templates = await getTemplatesUseCase({ getTemplates })
-
-	templates = take(templates, 5)
+	const templates = await getTemplatesUseCase({ getTemplates })
+	const containers = await getContainersUseCase({ getContainers })
 
 	return (
 		<Card>
-			<CardHeader className='px-7'>
+			<CardHeader>
 				<CardTitle>Annonser</CardTitle>
 				<CardDescription>Sist endret annonser</CardDescription>
 			</CardHeader>
@@ -41,12 +43,23 @@ export default async function RecentlyChangedTemplates() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{templates.map(template => (
+						{take(templates, 5).map(template => (
 							<TableRow
 								key={template.templateId}
 								className='bg-accent'
 							>
-								<TableCell className='font-medium'>{template.name}</TableCell>
+								<TableCell className='font-medium'>
+									<Link
+										href={`/flyttefordel/${
+											containers.find(
+												container =>
+													container.containerId === template.containerId
+											)!.pageId
+										}/${template.containerId}/${template.templateId}`}
+									>
+										{template.name}
+									</Link>
+								</TableCell>
 								<TableCell>
 									<Badge
 										className='text-xs'

@@ -84,7 +84,11 @@ const formSchema = z.object({
 	name: z.string().trim().min(1, 'Navn kan ikke være tomt'),
 	active: z.boolean(),
 	header: z.string().trim().min(1, 'Overskrift kan ikke være tomt'),
-	text: z.string().trim().min(1).max(256, 'Tekst kan maks være 256 tegn'),
+	text: z
+		.string()
+		.trim()
+		.min(1, 'Tekst kan ikke være tomt')
+		.max(256, 'Tekst kan maks være 256 tegn'),
 	logo: z
 		.object({
 			name: z.string().min(1),
@@ -207,8 +211,8 @@ export default function TemplateEditor({
 					</Button>
 				</div>
 
-				<div className='grid grid-cols-4 gap-8 mb-8'>
-					<div className='col-span-3'>
+				<div className='grid grid-cols-1 md:grid-cols-4 md:gap-8 mb-8'>
+					<div className='col-span-3 order-2 md:order-1'>
 						<Card className='mb-8'>
 							<CardContent className='py-4 flex gap-4 items-center justify-between'>
 								<Badge>{templateTypes[TemplateType.Offer]}</Badge>
@@ -269,8 +273,17 @@ export default function TemplateEditor({
 														: templateLogoWatch.url
 												}
 												onFileSelect={({ file, dataUrl }) => {
-													// Check if file is maximum 1 MB
+													if (
+														!['image/png', 'image/jpeg'].includes(file.type)
+													) {
+														form.setError('logo', {
+															message: 'Fil må være et bilde',
+														})
+														return
+													}
+
 													if (parseFloat(bytesToMb(file.size)) > 1) {
+														// Check if file is maximum 1 MB
 														form.setError('logo', {
 															message: 'Fil er for stor. Kan maks være 1 MB',
 														})
@@ -330,7 +343,7 @@ export default function TemplateEditor({
 						</Card>
 					</div>
 
-					<Card>
+					<Card className='order-1 md:order-2'>
 						<CardContent>
 							<div className='mt-4'>
 								{!noExpiryWatch && (
