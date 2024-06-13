@@ -273,8 +273,17 @@ export default function TemplateEditor({
 														: templateLogoWatch.url
 												}
 												onFileSelect={({ file, dataUrl }) => {
-													// Check if file is maximum 1 MB
+													if (
+														!['image/png', 'image/jpeg'].includes(file.type)
+													) {
+														form.setError('logo', {
+															message: 'Fil må være et bilde',
+														})
+														return
+													}
+
 													if (parseFloat(bytesToMb(file.size)) > 1) {
+														// Check if file is maximum 1 MB
 														form.setError('logo', {
 															message: 'Fil er for stor. Kan maks være 1 MB',
 														})
