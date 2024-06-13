@@ -135,17 +135,15 @@ export default function AddTemplateOfferFormDialog({
 									defaultValue={{
 										label: field.value.name,
 										value: field.value.productId,
-										id: field.value.productId,
 									}}
 									options={products.map(product => ({
 										label: product.name!,
-										value: product.productId,
-										id: product.productId!,
+										value: product.productId!,
 									}))}
 									onSelect={option => {
 										field.onChange({
 											name: option.label,
-											productId: option.id.toString(),
+											productId: option.value,
 										})
 									}}
 								/>

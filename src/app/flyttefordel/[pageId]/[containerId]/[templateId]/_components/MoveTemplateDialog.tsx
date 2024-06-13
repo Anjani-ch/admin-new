@@ -53,11 +53,10 @@ export default function MoveTemplateDialog({ pages, containers }: Props) {
 				<Combobox
 					options={pages.map(page => ({
 						label: page.name!,
-						value: page.pageId,
-						id: page.pageId!,
+						value: page.pageId!,
 					}))}
 					onSelect={option => {
-						setSelectedPage(pages.find(page => page.pageId === option.id)!)
+						setSelectedPage(pages.find(page => page.pageId === option.value)!)
 						setSelectedContainer(null)
 					}}
 				/>
@@ -73,11 +72,12 @@ export default function MoveTemplateDialog({ pages, containers }: Props) {
 					).map(container => ({
 						label: container.name!,
 						value: container.containerId,
-						id: container.containerId!,
 					}))}
 					onSelect={option => {
 						setSelectedContainer(
-							containers.find(container => container.containerId === option.id)!
+							containers.find(
+								container => container.containerId === option.value
+							)!
 						)
 					}}
 				/>
